@@ -1,0 +1,73 @@
+version: '1'
+services:
+  judaicalink:
+      build: .
+      ports:
+        - "80:80"
+        - "1313:1313"
+      volumes:
+        - type: volume
+          source: judaicalink
+          target: /data
+
+
+  postgres:
+    image: 'postgres'
+    ports:
+            - "5433:5432"
+    environment:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: user
+          POSTGRES_DB: db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  elasticsearch:
+    image: 'elasticsearch:2.4'
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: 'kibana:4.6'
+    ports:
+      - "5601:5601"
+    links:
+      - elasticsearch
+    environment:
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+
+  fuseki:
+    image: 'secoresearch/fuseki'
+    ports:
+      - "3030:3030"
+    volumes:
+      - fuseki_data:/fuseki
+    links:
+      - judaicalink
+
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+volumes:
+    db_data:
+      driver: local
+
+    es_data:
+        driver: local
+
+    fuseki_data:
+        driver: local
+
+    judaicalink:
+        driver: local
+
+    redis_data:
+        driver: local
