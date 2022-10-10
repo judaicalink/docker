@@ -81,23 +81,83 @@ cp ./site/update.sh /data/judaicalink/web.judaicalink.org/
 cp ./site/rebuild.sh /data/judaicalink/web.judaicalink.org/
 echo "done."  | lolcat
 
-echo "----------------------------------------" | lolcat
-echo "downloading Judaicalink site..." | lolcat
+echo "----------------------------------------" #| lolcat
+echo "downloading Judaicalink site..." #| lolcat
 cd /data/judaicalink/web.judaicalink.org/hugo/ || exit
 git clone https://github.com/judaicalink/judaicalink-site.git
-echo "done."  | lolcat
+echo "done."  #| lolcat
 
 echo "----------------------------------------" #| lolcat
-echo "updating and building..." | lolcat
-cd /app  || exit
+echo "updating and building..." #| lolcat
+cd /data/judaicalink/web.judaicalink.org/  || exit
 ./update.sh
 ./rebuild.sh
 echo "done."  | lolcat
 
 echo "----------------------------------------" #| lolcat
-echo "downloading generators..." | lolcat
-cd /app || exit
+echo "downloading generators..." #| lolcat
+cd /data/judaicalink || exit
 git clone --branch master https://github.com/judaicalink/judaicalink-generators.git
 
-echo "done."  | lolcat
+# Pubby
+echo "----------------------------------------" #| lolcat
+echo "downloading Pubby..." #| lolcat
+cd /data/judaicalink || exit
+git clone https://github.com/lod-pubby/pubby-django.git
+
+# Setup
+echo "----------------------------------------" #| lolcat
+echo "setting up Pubby..." #| lolcat
+cd /app || exit
+cp pubby/runserver.sh /data/judaicalink/pubby-django/
+cp pubby/update.sh /data/judaicalink/pubby-django/update.sh
+touch /data/judaicalink/pubby-django/update.log
+
+# create venv
+python3 -m venv /data/judaicalink/venv
+source /data/judaicalink/pubby-venv/bin/activate
+ls -s /data/judaicalink/pubby-venv/bin/activate /data/judaicalink/pubby-django/activate
+cd /data/judaicalink/pubby-django || exit
+# install requirements
+cp /app/pubby/requirements.txt /data/judaicalink/pubby-django/
+pip install gunicorn
+pip install django
+pip install rdflib
+pip install sparqlwrapper
+pip install regex
+pip install git+https://github.com/FlorianRupp/django-webhook-consume.git
+pip install environ
+pip install django-environ
+#pip install -r requirements.txt
+
+cd /data/judaicalink/pubby-django || exit
+./update.sh
+cp /app/pubby/pubby.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl start pubby.service
+
+# loader
+cd /app || exit
+echo "----------------------------------------" #| lolcat
+echo "downloading loader..." #| lolcat
+cd /data/judaicalink || exit
+git clone -b master https://github.com/judaicalink/judaicalink-loader.git
+
+# Labs
+echo "----------------------------------------" #| lolcat
+echo "downloading Labs..." #| lolcat
+cd /data/judaicalink || exit
+git clone --branch deployment https://github.com/wisslab/judaicalink-labs.git
+cd /data/judaicalink/judaicalink-labs || exit
+pip install -r requirements.txt --user
+cp labs/settings_dev.py /data/judaicalink/judaicalink-labs/labs/settings.py
+cd /data/judaicalink/judaicalink-labs/labs/ || exit
+python3 manage.py migrate --noinput
+python3 manage.py collectstatic --noinput
+python3 manage.py createsuperuser --noinput --username admin --email admin@admin.com --password admin
+python3 manage.py runserver # change to service
+
+# Fix services pubby and labs
+
+echo "done."  #| lolcat
 exit 0

@@ -1,0 +1,12 @@
+[Unit]
+Description=Pubby server
+
+[Service]
+Type=oneshot
+ExecStart=/data/judaicalink/pubby-django/runserver.sh start
+RemainAfterExit= true
+ExecStop=/data/judaicalink/pubby-django/runserver.sh stop
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
