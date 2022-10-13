@@ -1,6 +1,6 @@
 #!/bin/bash
 cd /data/judaicalink/pubby-django/server
-source /data/judaicalink/pubby-env/bin/activate
+source /data/judaicalink/venv/bin/activate
 msg=`git pull`
 if [[ "$msg" == "Already up to date." ]]; then
         echo "Nichts zu tun, Ende."

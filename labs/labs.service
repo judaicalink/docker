@@ -1,0 +1,13 @@
+[Unit]
+Description=Judaicalink labs server
+
+[Service]
+Type=oneshot
+ExecStart=/data/judaicalink-labs/runserver.sh start
+RemainAfterExit= true
+ExecStop=/data/judaicalink-labs/runserver.sh stop
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
+
