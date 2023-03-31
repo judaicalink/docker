@@ -1,13 +1,13 @@
 #!/bin/bash
 start() {
-	cd /data/judaicalink-labs/labs
-	source /data/python/env/bin/activate
+	cd /data/judaicalink/judaicalink-labs/labs
+	source /data/judaicalink/venv/bin/activate
 	nohup daphne -p 8000 labs.asgi:application |& tee -a /var/log/daphne/daphne.log &
 	 _pid=$!
 	 echo "$_pid" > /var/run/judaicalink-labs.pid
 }
 stop() {
-	_pid = `cat /var/run/judaicalink-labs.pid`
+	_pid=`cat /var/run/judaicalink-labs.pid`
 	pkill -3 $_pid
 	rm /var/run/judaicalink-labs.pid
 }
