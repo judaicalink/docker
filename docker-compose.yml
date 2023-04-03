@@ -1,4 +1,4 @@
-version: '1'
+version: '0.1'
 name: 'judaicalink'
 services:
   judaicalink:
@@ -15,6 +15,8 @@ services:
           source: judaicalink
           target: /data
       privileged: true
+      image: judaicalink/judaicalink
+      container_name: judaicalink
 
   elasticsearch:
     image: 'elasticsearch:2.4'
