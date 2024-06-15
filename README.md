@@ -32,6 +32,15 @@ Using the venv `source /data/judaicalink/venv/bin/activate`.
 This loads all the triples into the triple store (Fuseki).
 
 ## Access from the browser
+### Web
+In you browser go to 'http://localhost'
+
+### Labs
+
+### Pubby 
+
+### Solr
+
 
 ### Fuseki
 Fuseki uses a User Interface. Navigate to `http://localhost:3030`. The port may differ if you have changed it in the `docker-compose.yml` file.
@@ -41,6 +50,17 @@ Fuseki uses a User Interface. Navigate to `http://localhost:3030`. The port may 
 ### JudaicaLink labs
 
 
-# Todo
-Generate all the triples from the scripts.
 
+# Components
+* Fuseki
+* Solr
+* Kibana
+* Elasticsearch
+* NGINX
+* Dovecot
+* Postfix
+* Redis
+* Daphne
+* Guincorn
+* Hugo
+* Python Django

@@ -18,6 +18,7 @@ services:
       image: judaicalink/judaicalink
       container_name: judaicalink
 
+# Will be replaced with solr
   elasticsearch:
     image: 'elasticsearch:2.4'
     ports:
@@ -36,6 +37,30 @@ services:
       - elasticsearch
     environment:
       - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+
+  NGINX:
+    image: 'nginx:stable-alpine3.17'
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    links:
+      - judaicalink
+    depends_on:
+      - judaicalink
+
+  solr:
+    image: 'solr:8.11.2'
+    ports:
+      - "8983:8983"
+    volumes:
+      - ./solr:/opt/solr/server/solr/mycores
+    links:
+      - judaicalink
+    depends_on:
+      - judaicalink
 
 volumes:
     db_data:
