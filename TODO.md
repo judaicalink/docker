@@ -1,11 +1,14 @@
 # Todo's
-*  Start labs
-*  Start pubby
 * pubby routes
-* Fuseki as container
+* Fuseki server
+* 
 * Load Generators into Fuseki
-* Elastic Search for: http://localhost:8080/search/search?page=1&input0=hfh
+* Elastic Search for: http://localhost:3030/search/search?page=1&input0=hfh
 * Kibana
 * Logstash
 * * Admin interface labs und pubby
 * 
+* Generate all the triples from the scripts.
+* Run the triple loader script.
+* Build the corpus.
+* Run django

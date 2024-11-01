@@ -13,15 +13,15 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 
 start() {
-    echo "Starting labs service..."
+    echo "Starting pubby service..."
     source /data/judaicalink/venv/bin/activate
-    cd /data/judaicalink/judaicalink-labs
+    cd /data/judaicalink/pubby-django
     ./runserver.sh start
 }
 
 stop() {
-    echo "Stopping labs service..."
-    cd /data/judaicalink/judaicalink-labs
+    echo "Stopping pubby service..."
+    cd /data/judaicalink/pubby-django
     ./runserver.sh stop
 }
 
