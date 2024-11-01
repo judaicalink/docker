@@ -36,7 +36,7 @@ RUN apt-get -y update && apt-get -y upgrade && apt-get install -y \
 WORKDIR /app
 
 ADD installer.sh ./
-COPY site/* ./site/
+COPY judaicalink-site/* ./site/
 
 # Vim
 COPY /conf/vim/.vimrc /app/.vimrc
