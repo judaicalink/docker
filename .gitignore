@@ -148,7 +148,7 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
-/site
+/judaicalink-site
 
 # mypy
 .mypy_cache/
