@@ -1,76 +1,164 @@
-version: '0.1'
-name: 'judaicalink'
 services:
-  judaicalink:
-      build: .
+  # JudaicaLink Site
+  judaicalink-site:
+      build:
+        context: ./judaicalink-site
+        args:
+          GIT_REPO_URL: https://github.com/judaicalink/judaicalink-site
+          GIT_BRANCH: master
+      container_name: judaicalink-site
       ports:
-        - "80:80"
-        - "443:443"
-        - "1313:1313"
-        - "3030:3030"
-        - "8000:8000"
-        - "8001:8001"
-      volumes:
-        - type: volume
-          source: judaicalink
-          target: /data
-      privileged: true
-      image: judaicalink/judaicalink
-      container_name: judaicalink
+        - "7999:80"
+      expose:
+        - "80"
+        - "443"
+      networks:
+          - webnet
 
-# Will be replaced with solr
-  elasticsearch:
-    image: 'elasticsearch:2.4'
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
+  #JudaicaLink Labs
+  judaicalink-labs:
+      build:
+        context: ./judaicalink-labs
+        args:
+          GIT_REPO_URL: https://github.com/judaicalink/judaicalink-labs.git
+          GIT_BRANCH: solr
+      container_name: judaicalink-labs
+      env_file:
+        - .env  # Loads environment variables including DATABASE_URL
+      depends_on:
+        - postgres
+      ports:
+          - "8000:8000"  # Expose port for external access
+      networks:
+        - webnet
 
-  kibana:
-    image: 'kibana:4.6'
-    ports:
-      - "5601:5601"
-    links:
-      - elasticsearch
-    environment:
-      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
 
-  NGINX:
-    image: 'nginx:stable-alpine3.17'
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/nginx/ssl
-    links:
-      - judaicalink
-    depends_on:
-      - judaicalink
+  # Pubby Django
+  pubby:
+      build:
+          context: ./pubby
+          args:
+              GIT_REPO_URL: https://github.com/lod-pubby/pubby-django.git
+              GIT_BRANCH: judaicalink
+      container_name: pubby
+      env_file:
+          - .env
+      expose:
+          - "8002:8002"
+      networks:
+              - webnet
 
+  # Judaicalink Ontology
+  judaicalink-ontology:
+      build:
+          context: ./judaicalink-ontology
+          args:
+            GIT_REPO_URL: https://github.com/judaicalink/judaicalink-ontology.git
+            GIT_BRANCH: master
+      container_name: judaicalink-ontology
+      expose:
+          - "8003:8003"
+      networks:
+              - webnet
+
+  # Judaicalink Loader
+  judaicalink-loader:
+    build:
+        context: ./judaicalink-loader
+        args:
+            GIT_REPO_URL: https://github.com/judaicalink/judaicalink-loader.git
+            GIT_BRANCH: master
+    container_name: judaicalink-loader
+    expose:
+        - "8005:8005"
+    networks:
+            - webnet
+
+  # Judaicalink Data
+
+  # JudaicaLink Generators
+  judaicalink-generators:
+      build:
+          context: ./judaicalink-generators
+          args:
+            GIT_REPO_URL: https://github.com/judaicalink/judaicalink-generators.git
+            GIT_BRANCH: master
+      container_name: judaicalink-generators
+      expose:
+          - "8004:8004"
+      networks:
+              - webnet
+
+  # SOLR
   solr:
-    image: 'solr:8.11.2'
+    image: solr:latest
+    container_name: solr
     ports:
       - "8983:8983"
+    networks:
+      - webnet
+
+  # Postgres
+  postgres:
+    image: 'postgres:latest'
+    container_name: postgres
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5433:5432"  # Mapping host port 5433 to container port 5432
+    environment:
+          POSTGRES_PASSWORD: xO@X67B7J2Nq1bGYozCG
+          POSTGRES_USER: judaicalink
+          POSTGRES_DB: judicalink-labs-db
+
+    networks:
+        - webnet
+
+  # Fuseki
+  fuseki:
+    image: 'secoresearch/fuseki'
+    container_name: fuseki
+    ports:
+      - "3030:3030"
+    networks:
+      - webnet
+
+  # Redis
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - "6379:6379"
+    networks:
+        - webnet
+
+  # Mailserver (e.g., MailHog for development)
+  mailserver:
+    image: mailhog/mailhog
+    container_name: mailserver
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - webnet
+
+  # NGINX as reverse proxy
+  nginx:
+    image: nginx:latest
+    container_name: nginx
     volumes:
-      - ./solr:/opt/solr/server/solr/mycores
-    links:
-      - judaicalink
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
     depends_on:
-      - judaicalink
+      - judaicalink-site
+      - judaicalink-labs
+      #- pubby
+      - solr
+      - fuseki
+      - mailserver
+    networks:
+      - webnet
 
-volumes:
-    db_data:
-      driver: local
-
-    es_data:
-        driver: local
-
-    fuseki_data:
-        driver: local
-
-    judaicalink:
-        driver: local
+networks:
+  webnet:
+    driver: bridge
