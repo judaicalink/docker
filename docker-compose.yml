@@ -158,15 +158,52 @@ services:
     networks:
       - judaicalink-webnet
 
-  # Mailserver (e.g., MailHog for development)
+  # Mailserver
   mailserver:
-    image: mailhog/mailhog
+    image: mailserver/docker-mailserver:latest
     container_name: mailserver
+    hostname: mail
+    domainname: judaicalink.org
+    env_file: mail.env
     ports:
-      - "1025:1025"
-      - "8025:8025"
-    networks:
-      - judaicalink-webnet
+      - "25:25"       # SMTP
+      - "143:143"     # IMAP
+      - "587:587"     # Submission
+      - "993:993"     # IMAPS
+    volumes:
+      - maildata:/var/mail
+      - mailstate:/var/mail-state
+      - maillogs:/var/log/mail
+      - ./config/:/tmp/docker-mailserver/
+    environment:
+      - ENABLE_SPAMASSASSIN=1
+      - ENABLE_CLAMAV=1
+      - ENABLE_FAIL2BAN=1
+      - ENABLE_POSTGREY=0
+      - ONE_DIR=1
+      - DMS_DEBUG=0
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: unless-stopped
+
+    # add the password
+    # docker exec -it mailserver setup email add user@example.com password
+
+  # Roundcube
+  webmail:
+    image: roundcube/roundcubemail:latest
+    container_name: webmail
+    environment:
+      - ROUNDCUBEMAIL_DEFAULT_HOST=mail
+      - ROUNDCUBEMAIL_SMTP_SERVER=mail
+      - ROUNDCUBEMAIL_SMTP_PORT=587
+    ports:
+      - "8080:80"  # Access Roundcube on localhost:8080
+    depends_on:
+      - mailserver
+    volumes:
+      - roundcube-data:/var/www/html
 
   # NGINX as reverse proxy
   nginx:
@@ -183,6 +220,7 @@ services:
       - solr
       - fuseki
       - mailserver
+      - webmail
       - ontology
       - loader
       - dumps
@@ -202,6 +240,12 @@ services:
       - ./data/cm:/data/cm # Mount a local folder to persist data
     networks:
       - judaicalink-webnet
+
+volumes:
+  maildata:
+  mailstate:
+  maillogs:
+  roundcube-data:
 
 networks:
   judaicalink-webnet:
