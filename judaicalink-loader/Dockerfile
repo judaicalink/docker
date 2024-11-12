@@ -8,7 +8,7 @@ RUN apk add --no-cache git bash
 WORKDIR /app
 
 # Define build arguments for the GitHub repository URL and branch
-ARG GIT_REPO_URL=https://github.com/yourusername/judaicalink-generators.git
+ARG GIT_REPO_URL=https://github.com/judaicalink/judaicalink-generators.git
 ARG GIT_BRANCH=master
 
 # Clone the specified branch of the repository
