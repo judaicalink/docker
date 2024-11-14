@@ -32,7 +32,7 @@ services:
       - judaicalink-webnet
 
   #JudaicaLink Labs
-  # FIXME
+  # TODO: Labs
   labs:
     build:
       context: ./judaicalink-labs
@@ -40,6 +40,7 @@ services:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-labs.git
         GIT_BRANCH: solr
     container_name: labs
+    command: tail -f /dev/null
     #env_file:
     #  - .env  # Loads environment variables including DATABASE_URL
     depends_on:
@@ -49,6 +50,7 @@ services:
       - fuseki
       - redis
       - mailserver
+      - ontology
     volumes_from:
       - data
     ports:
@@ -75,21 +77,22 @@ services:
       - judaicalink-webnet
 
   # Judaicalink Ontology
-  # FIXME
   ontology:
     build:
       context: ./judaicalink-ontology
       args:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-ontology.git
         GIT_BRANCH: master
+        FUSEKI_PASSWORD: ${FUSEKI_PASSWORD}
+        FUSEKI_SERVER: ${FUSEKI_SERVER}
+        FUSEKI_USER: ${FUSEKI_USER}
+        FUSEKI_STORAGE: ${FUSEKI_STORAGE}
     container_name: ontology
-    expose:
-      - "8003:8003"
+    command: tail -f /dev/null
     networks:
       - judaicalink-webnet
 
   # Judaicalink Loader
-  # FIXME
   loader:
     build:
       context: ./judaicalink-loader
@@ -97,6 +100,7 @@ services:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-loader.git
         GIT_BRANCH: master
     container_name: loader
+    command: tail -f /dev/null
     expose:
       - "8005:8005"
     networks:
@@ -119,14 +123,16 @@ services:
       - judaicalink-webnet
 
   # JudaicaLink Generators
-  # FIXME
+  # TODO: Generators
   generators:
     build:
       context: ./judaicalink-generators
       args:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-generators.git
         GIT_BRANCH: master
-    container_name: judaicalink-generators
+    container_name: generators
+    volumes:
+      - ./data/generators:/data/generators
     expose:
       - "8004:8004"
     networks:
@@ -145,8 +151,12 @@ services:
   fuseki:
     image: "secoresearch/fuseki"
     container_name: fuseki
+    environment:
+      - ADMIN_PASSWORD=${FUSEKI_PASSWORD}
     ports:
       - "3030:3030"
+    volumes:
+      - fuseki-data:/fuseki/data
     networks:
       - judaicalink-webnet
 
@@ -246,6 +256,8 @@ volumes:
   mailstate:
   maillogs:
   roundcube-data:
+  fuseki-data:
+  judaicalink-generators:
 
 networks:
   judaicalink-webnet:
