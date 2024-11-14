@@ -3,7 +3,7 @@ FROM python:3.10-slim AS base
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-#    ca-certificates \
+    ca-certificates \
     build-essential \
     libpq-dev \
     gcc \
@@ -23,6 +23,14 @@ WORKDIR /app
 # Define build arguments for the GitHub repository URL and branch
 ARG GIT_REPO_URL=https://github.com/judaicalink/judaicalink-ontology.git
 ARG GIT_BRANCH=master
+ARG FUSEKI_SERVER
+ARG FUSEKI_USER
+ARG FUSEKI_PASSWORD
+
+ENV FUSEKI_SERVER=$FUSEKI_SERVER
+ENV FUSEKI_USER=$FUSEKI_USER
+ENV FUSEKI_PASSWORD=$FUSEKI_PASSWORD
+
 
 # Clone the specified branch of the repository
 RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
@@ -32,33 +40,27 @@ RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
 
 # Set the default command to bash, allowing you to run scripts interactively
 CMD ["/bin/bash"]
+SHELL ["/bin/bash", "-c"]
 
 # Install Python dependencies
 RUN python -m pip install --upgrade pip
 
+RUN echo "Generating the ontology"
+
+
 RUN python generate.py
 
+# copy run.sh
+COPY run.sh /app/run.sh
 
-# FIXME: Create a new dataset in the triplestore
-CMD curl -u admin:Jbz7DWU1K15YGqh -X POST http://fuseki:3030/$/datasets \
-  -d "dbName=judaicalink" \
-  -d "dbType=tdb2"
+# Make the run.sh executable
+RUN chmod +x /app/run.sh
 
-CMD curl -u admin:Jbz7DWU1K15YGqh http://fuseki:3030/$/datasets
+# Run the run.sh script
+RUN /app/run.sh
 
-# FIXME: Create a new graph in the triplestore
-CMD curl -X PUT -H "Content-Type: text/turtle" \
-    -u admin:Jbz7DWU1K15YGqh \
-     http://fuseki:3030/judaicalink/data?graph=http://judaicalink.org/ontology
+# Run the script as the main container process
+ENTRYPOINT ["/app/run.sh"]
 
-#RUN curl --request POST -sL \
-#    --data-binary '@./create-dataset.sparql'    --header 'Content-Type: application/sparql-query' \
-#    --url 'http://localhost:3030/judaicalink/update'
+CMD ["tail", "-f", "/dev/null"]
 
-# FIXME: Load the ttl file into the triplestore
-CMD curl  --request POST -sL \
-    -u admin:Jbz7DWU1K15YGqh \
-    --data-binary '@./judaicalink-ontology.ttl'    --header 'Content-Type: text/x-turtle' \
-    --url 'http://fuseki:3030/judaicalink/data'
-
-EXPOSE 80
