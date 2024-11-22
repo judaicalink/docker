@@ -5,15 +5,21 @@ services:
     container_name: postgres
     restart: always
     shm_size: 128mb
-    ports:
-      - "5433:5432" # Mapping host port 5433 to container port 5432
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_USER}
-
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+        - ${POSTGRES_PORT}:5432
     networks:
       - judaicalink-webnet
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
 
   # JudaicaLink Site
   site:
@@ -35,26 +41,42 @@ services:
   # TODO: Labs
   labs:
     build:
-      context: ./judaicalink-labs
+      context: ./labs
       args:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-labs.git
         GIT_BRANCH: solr
+        LOGFILE: ${LOGFILE}
+        DATABASE_URL: ${DATABASE_URL}
+        DATABASE_ENGINE: ${DATABASE_ENGINE}
+        DATABASE_NAME: ${DATABASE_NAME}
+        STATIC_ROOT: ${STATIC_ROOT}
+        MEDIA_ROOT: ${MEDIA_ROOT}
+        POSTGRES_HOST: ${POSTGRES_HOST}
+        POSTGRES_PORT: ${POSTGRES_PORT}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DB}
+
     container_name: labs
     command: tail -f /dev/null
-    #env_file:
-    #  - .env  # Loads environment variables including DATABASE_URL
+    environment:
+      DJANGO_SETTINGS_MODULE: labs.settings
+    env_file:
+      - .env  # Loads environment variables including DATABASE_URL
     depends_on:
       - postgres
       - data
       - solr
       - fuseki
       - redis
-      - mailserver
+      #- mailserver
       - ontology
     volumes_from:
       - data
     ports:
-      - "8000:8000" # Expose port for external access
+      - "8001:8001" # Expose port for external access
+    expose:
+      - "8000"
     networks:
       - judaicalink-webnet
 
@@ -123,7 +145,6 @@ services:
       - judaicalink-webnet
 
   # JudaicaLink Generators
-  # TODO: Generators
   generators:
     build:
       context: ./judaicalink-generators
@@ -131,6 +152,7 @@ services:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-generators.git
         GIT_BRANCH: master
     container_name: generators
+    command: tail -f /dev/null
     volumes:
       - ./data/generators:/data/generators
     expose:
