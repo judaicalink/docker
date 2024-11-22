@@ -30,7 +30,6 @@ ARG GIT_BRANCH
 # Clone the repository using the specified branch
 RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
 
-
 WORKDIR /app/server/server
 
 # Set the settings
