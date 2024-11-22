@@ -1,18 +1,25 @@
 # Use a lightweight base image with Git and Bash
-FROM alpine:latest
+FROM python:3.10-slim AS base
 
 # Install Git and Bash
-RUN apk add --no-cache git bash
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    build-essential \
+    libpq-dev \
+    gcc \
+    curl \
+    git \
+    npm \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
 # Define build arguments for the GitHub repository URL and branch
-ARG GIT_REPO_URL=https://github.com/judaicalink/judaicalink-generators.git
-ARG GIT_BRANCH=main
-
-# Clone the specified branch of the repository
-RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
+ARG GIT_REPO_URL
+ARG GIT_BRANCH=master
+RUN git clone --branch $GIT_BRANCH $GIT_REPO_URL .
 
 # Make all bash scripts executable
 #RUN chmod +x *.sh
