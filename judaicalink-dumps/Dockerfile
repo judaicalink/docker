@@ -8,11 +8,13 @@ RUN apk add --no-cache git bash
 WORKDIR /app
 
 # Define build arguments for the GitHub repository URL and branch
-ARG GIT_REPO_URL=https://github.com/judaicalink/dumps.git
-ARG GIT_BRANCH=main
+ARG GIT_REPO_URL
+ARG GIT_BRANCH
 
 # Clone the specified branch of the repository
-RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
+RUN git config --global http.postBuffer 524288000 && \
+    git config --global core.compression 0 && \
+    git clone -b $GIT_BRANCH $GIT_REPO_URL /app/
 
 # Make all bash scripts executable
 RUN chmod +x *.sh
