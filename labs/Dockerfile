@@ -1,5 +1,5 @@
 # Base image with Python
-FROM python:3.10-slim AS base
+FROM python:3.11-slim AS base
 
 # Install system dependencies
 RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
@@ -11,8 +11,7 @@ RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
     libpq-dev \
     gcc \
     curl \
-    git \
-    npm && \
+    git && \
     rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip and configure pip for TLS/SSL
@@ -56,11 +55,11 @@ RUN echo "DEBUG=$DEBUG" >> .env && \
     echo "MEDIA_ROOT=$MEDIA_ROOT" >> .env && \
     echo "STATIC_ROOT=$STATIC_ROOT" >> .env && \
     echo "LOGFILE=$LOGFILE" >> .env && \
-    echo "DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB" >> .env \
-    echo "DATABASE_DB=$POSTGRES_DB" >> .env \
-    echo "DATABASE_USER=$POSTGRES_USER" >> .env \
-    echo "DATABASE_PASSWORD=$POSTGRES_PASSWORD" >> .env \
-    echo "DATABASE_HOST=$POSTGRES_HOST" >> .env \
+    echo "DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB" >> .env && \
+    echo "DATABASE_DB=$POSTGRES_DB" >> .env && \
+    echo "DATABASE_USER=$POSTGRES_USER" >> .env && \
+    echo "DATABASE_PASSWORD=$POSTGRES_PASSWORD" >> .env && \
+    echo "DATABASE_HOST=$POSTGRES_HOST" >> .env && \
     echo "DATABASE_PORT=$POSTGRES_PORT" >> .env
 
 
@@ -155,32 +154,47 @@ ENV PYTHONPATH="/app:$PYTHONPATH"
 ENV DJANGO_SETTINGS_MODULE=labs.settings
 
 WORKDIR /app
+COPY . .
+SHELL ["/bin/bash", "--login", "-c"]
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN nvm install 22
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install /app/requirements.txt
+RUN echo $(ls -1 /app/labs)
 
 WORKDIR /app/labs
+RUN node -v
+RUN nvm current
+RUN npm -v
+
+# Delete node_modules and package-lock.json for a clean install
+RUN rm -rf node_modules
+RUN rm -rf package-lock.json
+
 
 # Install npm dependencies and build the frontend
-RUN npm install -g npm && \
-    npm install && \
-    npm run build
+RUN npm install
+RUN npm run build
+RUN npm run cs
 
 # Collect static files
-RUN python manage.py collectstatic --no-input
+#RUN python manage.py collectstatic --no-input
 
 # Wait for dependent services
 COPY wait-for-it.sh /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
-RUN /app/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -- echo "Postgres is ready"
-
-WORKDIR /app/labs/
+#RUN /app/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -- echo "Postgres is ready"
 
 
 # Run the application using Daphne
-RUN python manage.py migrate
+CMD ["/bin/bash", "-c", "/app/wait-for-it.sh localhost:5434 -- python manage.py migrate && python manage.py collectstatic --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
 
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8001", "labs.asgi:application"]
+#CMD ["daphne", "-b", "0.0.0.0", "-p", "8001", "labs.asgi:application"]
 
 # Expose the port
 EXPOSE 8001
