@@ -1,23 +1,36 @@
-# Use a lightweight base image with Git and Bash
-FROM alpine:latest
+FROM python:3.11-slim AS base
 
-# Install Git and Bash
-RUN apk add --no-cache git bash
+# Install system dependencies
+RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
+    apt-get install --yes --quiet --no-install-recommends --fix-missing \
+    gnupg2 \
+    debian-archive-keyring \
+    ca-certificates \
+    build-essential \
+    libpq-dev \
+    gcc \
+    curl \
+    git && \
+    rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip and configure pip for TLS/SSL
+RUN python -m pip install --upgrade pip
 
 # Set working directory
 WORKDIR /app
 
-# Define build arguments for the GitHub repository URL and branch
-ARG GIT_REPO_URL
-ARG GIT_BRANCH
+RUN pip install requests beautifulsoup4 python-dotenv
 
-# Clone the specified branch of the repository
-RUN git config --global http.postBuffer 524288000 && \
-    git config --global core.compression 0 && \
-    git clone -b $GIT_BRANCH $GIT_REPO_URL /app/
 
-# Make all bash scripts executable
-RUN chmod +x *.sh
-#
 # Set the default command to bash, allowing you to run scripts interactively
 CMD ["/bin/bash"]
+
+COPY .env /app/.env
+
+#  Downloads the dumps from the server for now.
+COPY download_dumps.py /app/download_dumps.py
+
+#COPY /app /data/dumps
+COPY copy_script.sh /app/copy_script.sh
+RUN chmod +x /app/copy_script.sh
+ENTRYPOINT ["/app/copy_script.sh"]
