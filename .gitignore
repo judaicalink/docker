@@ -617,3 +617,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/git,windows,osx,linux,pycharm+all,jetbrains+all,node,python,django
+/data/dumps/dumps/
+/data/dumps/dumps-complete-2025-02-06.tar.gz
+/dumps/
