@@ -1,6 +1,8 @@
 # Use a lightweight base image
 FROM alpine:latest
 
+USER root
+
 # Install wget to download data
 RUN apk add --no-cache wget
 
@@ -21,4 +23,3 @@ ENV URL_METADATA=https://web.judaicalink.org/fulltexts/metadata/
 CMD wget -q --show-progress -r -np -nH -P metadata $URL_METADATA
     #wget -q --show-progress -r -np -nH -P txt $URL_TXT && \
     #wget -q --show-progress -r -np -nH -P cm $URL_CM && \
-

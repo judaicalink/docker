@@ -1,23 +1,43 @@
+# Use the official Solr image
 FROM solr:latest
 
+# Copy custom schema and configuration into the container
+#COPY solr-config /opt/solr/server/solr/configsets
+
+# Create dir /var/solr/data
+#RUN mkdir -p /var/solr/data
+
+# Copy the initialization script
+COPY solr-init.sh /docker-entrypoint-initdb.d/solr-init.sh
 USER root
+RUN chmod +x /docker-entrypoint-initdb.d/solr-init.sh
 
-# Copy custom config set into the container
-COPY config /opt/solr/server/solr/configsets/myconfig
-
-# Set proper ownership for Solr
-RUN chown -R solr:solr /opt/solr/server/solr/configsets
+#RUN /docker-entrypoint-initdb.d/docker-entrypoint.sh
 
 USER solr
 
-# Create cores with the copied configset
-RUN solr create_core -c cm -d /opt/solr/server/solr/myconfig && \
-    solr create_core -c cm_meta -d /opt/solr/server/solr/myconfig && \
-    solr create_core -c cm_entities -d /opt/solr/server/solr/myconfig && \
-    solr create_core -c cm_entitiy_names -d /opt/solr/server/solr/myconfig && \
-    solr create_core -c judaicalink -d /opt/solr/server/solr/myconfig && \
-    solr create_core -c judaicalink-beta -d /opt/solr/server/solr/myconfig
+WORKDIR /app
+COPY indices/data.json /data.json
 
+RUN echo "Starting Solr in foreground mode"
+# Start Solr in foreground mode
+#CMD ["solr", "start", "-f"]
+RUN solr start -f
+
+# Expose the default Solr port
 EXPOSE 8983
 
-CMD ["solr-foreground"]
+#RUN echo "Waiting for Solr to start..."
+#RUN timeout 60 bash -c 'until curl -s http://localhost:8983/solr/; do sleep 5; done'
+
+
+RUN echo "Loading JSON data into cores..."
+RUN curl -X POST -H "Content-Type: application/json" \
+     --data-binary @/data.json \
+     "http://localhost:8983/solr/judaicalink/update?commit=true"
+
+RUN curl -X POST -H "Content-Type: application/json" \
+     --data-binary @/data.json \
+     "http://localhost:8983/solr/cm/update?commit=true"
+
+
