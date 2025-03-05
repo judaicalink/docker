@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1",
+    "title": "Document 1",
+    "category": "Example"
+  },
+  {
+    "id": "2",
+    "title": "Document 2",
+    "category": "Test"
+  }
+]

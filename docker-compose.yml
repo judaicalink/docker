@@ -132,7 +132,7 @@ services:
       - data
     depends_on:
       - site
-      - dumps
+      #- dumps
       - fuseki
       #- nginx
     extra_hosts:
@@ -144,20 +144,21 @@ services:
       - judaicalink-webnet
 
   # JudaicaLink Dumps
-  dumps:
-    build:
-      #context: ./judaicalink-dumps
-      args:
-        GIT_REPO_URL: https://github.com/judaicalink/dumps.git
-        GIT_BRANCH: main
-    container_name: dumps
-    command: tail -f /dev/null
-    volumes:
-      - data:/data
-    volumes_from:
-      - data
-    networks:
-      - judaicalink-webnet
+  #dumps:
+  #  build:
+  #    #context: ./judaicalink-dumps
+  #    args:
+  #      GIT_REPO_URL: https://github.com/judaicalink/dumps.git
+  #      GIT_BRANCH: main
+  #  container_name: dumps
+  #  command: tail -f /dev/null
+  #  volumes:
+  #    - data:/data
+  #  volumes_from:
+  #    - data
+  #  networks:
+  #    - judaicalink-webnet
+  #    - judaicalink-webnet
 
   # JudaicaLink Generators
   generators:
@@ -177,17 +178,28 @@ services:
 
   # SOLR
   solr:
-    build:
-        context: ./solr
+    #build:
+    #    context: ./solr
+    #    dockerfile: Dockerfile
     image: solr:latest
     container_name: solr
     ports:
       - "8983:8983"
-    #volumes:
-      #  - ./solr/indices:/var/solr/data
+    volumes:
+      - solr_data:/var/solr
+      - ./solr/indices/data.json:/data.json
+      - ./solr/solr-init.sh:/docker-entrypoint-initdb.d/solr-init.sh
     networks:
       - judaicalink-webnet
-    restart: always
+    #restart: always
+    environment:
+      - SOLR_HOME=/var/solr/data
+    entrypoint:
+      - docker-entrypoint.sh
+      - bash
+      - "-c"
+      - "precreate-core cm; precreate-core cm_meta; precreate-core cm_entities; precreate-core cm_entity_names; precreate-core judaicalink; precreate-core judaicalink-beta"
+    command: [ "/bin/bash", "-c", "ls -l /docker-entrypoint-initdb.d && /docker-entrypoint-initdb.d/solr-init.sh" ]
 
   # Fuseki
   fuseki:
@@ -277,7 +289,7 @@ services:
       #- webmail
       - ontology
       - loader
-      - dumps
+      #- dumps
       - generators
       - redis
       - postgres
@@ -286,28 +298,42 @@ services:
 
   # Data
   data:
-    build:
-      context: ./data
+    #build:
+    #  context: ./data
+    image: alpine:latest
     container_name: data
+    user: root
     command: tail -f /dev/null # Keeps the container running indefinitely
     volumes:
       - ./data/cm:/data/cm # Mounts the Compact Memory full texts
       - ./data/dumps:/data/dumps # Mounts the dumps from the local folder
-      - /mnt/smbshare:/mnt/container_share  # Bind-mounting SMB share
+      - smb_share:/data/smbshare # Mounts the SMB share, this is for CM full texts , FIXME: remove /data/cm
       #- data:/data  # Mount persistent volume
     networks:
       - judaicalink-webnet
     restart: unless-stopped
 
 volumes:
-  maildata:
-  mailstate:
-  maillogs:
+  # for the mailserver
+  #maildata:
+  #mailstate:
+  #maillogs:
   #roundcube-data:
+
+  # For fuseki
   fuseki-data:
   #judaicalink-generators:
-  solr-data:
+  # for labs, SOLR
+  solr_data:
+    driver: local
   data:
+    driver: local
+  smb_share:
+    driver: local
+    driver_opts:
+      type: cifs
+      o: "addr=${SAMBA_SERVER},username=${SAMBA_USER},password=${SAMBA_PASS}"
+      device: "//${SAMBA_SERVER}/${SAMBA_SHARE}"
 
 
 networks:

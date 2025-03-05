@@ -11,6 +11,7 @@ RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
     libpq-dev \
     gcc \
     curl \
+    ping \
     git && \
     rm -rf /var/lib/apt/lists/*
 
@@ -32,6 +33,7 @@ RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
 
 WORKDIR /app/loader
 
+# Set the environment variable
 
 # Set the default command to bash, allowing you to run scripts interactively
 CMD ["/bin/bash"]

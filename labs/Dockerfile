@@ -164,7 +164,7 @@ ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 
 # Install Python dependencies
-RUN pip install /app/requirements.txt
+RUN pip install -r requirements.txt
 RUN echo $(ls -1 /app/labs)
 
 WORKDIR /app/labs
