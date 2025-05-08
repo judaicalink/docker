@@ -142,20 +142,20 @@ services:
       - judaicalink-webnet
 
   # JudaicaLink Dumps
-  dumps:
-    build:
-      context: ./judaicalink-dumps
-      args:
-        GIT_REPO_URL: https://github.com/judaicalink/dumps.git
-        GIT_BRANCH: main
-    container_name: dumps
-    command: tail -f /dev/null
-    volumes:
-      - data:/data
-    volumes_from:
-      - data
-    networks:
-      - judaicalink-webnet
+  #dumps:
+  #  build:
+  #    context: ./judaicalink-dumps
+  #    args:
+  #      GIT_REPO_URL: https://github.com/judaicalink/dumps.git
+  #      GIT_BRANCH: main
+  #  container_name: dumps
+  #  command: tail -f /dev/null
+  #  volumes:
+  #    - data:/data
+  #  volumes_from:
+  #    - data
+  #  networks:
+  #    - judaicalink-webnet
 
   # JudaicaLink Generators
   generators:
