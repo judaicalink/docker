@@ -11,7 +11,6 @@ RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
     libpq-dev \
     gcc \
     curl \
-    ping \
     git && \
     rm -rf /var/lib/apt/lists/*
 
