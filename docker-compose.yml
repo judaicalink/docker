@@ -103,7 +103,7 @@ services:
   # Judaicalink Ontology
   ontology:
     build:
-      context: ./judaicalink-ontology
+      context: ./ontology
       args:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-ontology.git
         GIT_BRANCH: master
