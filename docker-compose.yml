@@ -17,6 +17,7 @@ services:
 
   adminer:
     image: adminer
+    container_name: adminer
     restart: always
     ports:
       - 8081:8080
@@ -217,6 +218,7 @@ services:
   # Redis
   redis:
     image: "redis:alpine"
+    container_name: redis
     ports:
       - "6379:6379"
     networks:
