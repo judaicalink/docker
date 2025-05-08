@@ -25,7 +25,7 @@ services:
   # JudaicaLink Site
   site:
     build:
-      context: ./judaicalink-site
+      context: ./site
       args:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-site
         GIT_BRANCH: master
