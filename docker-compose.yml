@@ -119,7 +119,7 @@ services:
   # Judaicalink Loader
   loader:
     build:
-      context: ./judaicalink-loader
+      context: ./loader
       args:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-loader.git
         GIT_BRANCH: master
@@ -133,7 +133,6 @@ services:
       - site
       #- dumps
       - fuseki
-      #- nginx
     extra_hosts:
       - "fuseki:172.17.0.1"
       - "fuseki:127.0.0.1"
@@ -143,26 +142,25 @@ services:
       - judaicalink-webnet
 
   # JudaicaLink Dumps
-  #dumps:
-  #  build:
-  #    #context: ./judaicalink-dumps
-  #    args:
-  #      GIT_REPO_URL: https://github.com/judaicalink/dumps.git
-  #      GIT_BRANCH: main
-  #  container_name: dumps
-  #  command: tail -f /dev/null
-  #  volumes:
-  #    - data:/data
-  #  volumes_from:
-  #    - data
-  #  networks:
-  #    - judaicalink-webnet
-  #    - judaicalink-webnet
+  dumps:
+    build:
+      context: ./judaicalink-dumps
+      args:
+        GIT_REPO_URL: https://github.com/judaicalink/dumps.git
+        GIT_BRANCH: main
+    container_name: dumps
+    command: tail -f /dev/null
+    volumes:
+      - data:/data
+    volumes_from:
+      - data
+    networks:
+      - judaicalink-webnet
 
   # JudaicaLink Generators
   generators:
     build:
-      context: ./judaicalink-generators
+      context: ./generators
       args:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-generators.git
         GIT_BRANCH: master
@@ -265,8 +263,6 @@ services:
 
 volumes:
   fuseki-data:
-  #judaicalink-generators:
-  # for labs, SOLR
   solr_data:
     driver: local
   data:
