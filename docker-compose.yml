@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: ${POSTGRES_USER}
       POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
-        - ${POSTGRES_PORT}:5432
+      - ${POSTGRES_PORT}:5432
     networks:
       - judaicalink-webnet
 
@@ -42,7 +42,7 @@ services:
     networks:
       - judaicalink-webnet
 
-  #JudaicaLink Labs
+  # JudaicaLink Labs
   labs:
     build:
       context: ./labs
@@ -62,7 +62,6 @@ services:
         POSTGRES_DB: ${POSTGRES_DB}
 
     container_name: labs
-    #command: tail -f /dev/null
     environment:
       DJANGO_SETTINGS_MODULE: labs.settings
     env_file:
@@ -73,7 +72,6 @@ services:
       - solr
       - fuseki
       - redis
-      #- mailserver
       - ontology
     #volumes_from:
     #  - data
@@ -89,8 +87,8 @@ services:
     build:
       context: ./pubby
       args:
-        GIT_REPO_URL: https://github.com/lod-pubby/pubby-django.git
-        GIT_BRANCH: judaicalink
+        GIT_REPO_URL: https://github.com/judaicalink/pubby-django
+        GIT_BRANCH: master
     container_name: pubby
     depends_on:
       - fuseki
@@ -224,53 +222,6 @@ services:
     networks:
       - judaicalink-webnet
 
-  # Mailserver
-  #mailserver:
-  #  image: mailserver/docker-mailserver:latest
-  #  container_name: mailserver
-  #  hostname: mail
-  #  domainname: judaicalink.org
-  #  env_file: mail.env
-  #  ports:
-  #    - "25:25"       # SMTP
-  #    - "143:143"     # IMAP
-  #    - "587:587"     # Submission
-  #    - "993:993"     # IMAPS
-  #  volumes:
-  #    - maildata:/var/mail
-  #    - mailstate:/var/mail-state
-  #    - maillogs:/var/log/mail
-  #    - ./config/:/tmp/docker-mailserver/
-  #  environment:
-  #    - ENABLE_SPAMASSASSIN=1
-  #    - ENABLE_CLAMAV=1
-  #    - ENABLE_FAIL2BAN=1
-  #    - ENABLE_POSTGREY=0
-  #    - ONE_DIR=1
-  #    - DMS_DEBUG=0
-  #  cap_add:
-  #    - NET_ADMIN
-  #    - SYS_PTRACE
-  #  restart: unless-stopped
-
-    # add the password
-    # docker exec -it mailserver setup email add user@example.com password
-
-  # Roundcube
-  #webmail:
-  #  image: roundcube/roundcubemail:latest
-  #  container_name: webmail
-  #  environment:
-  #    - ROUNDCUBEMAIL_DEFAULT_HOST=mail
-  #    - ROUNDCUBEMAIL_SMTP_SERVER=mail
-  #    - ROUNDCUBEMAIL_SMTP_PORT=587
-  #  ports:
-  #    - "8080:80"  # Access Roundcube on localhost:8080
-  #  depends_on:
-  #    - mailserver
-  #  volumes:
-  #    - roundcube-data:/var/www/html
-
   # NGINX as reverse proxy
   nginx:
     image: nginx:latest
@@ -280,15 +231,12 @@ services:
     ports:
       - "80:80"
       - "443:443"
-     # - "3030:3030"
     depends_on:
       - site
       - labs
       - pubby
       - solr
       - fuseki
-      #- mailserver
-      #- webmail
       - ontology
       - loader
       #- dumps
@@ -316,13 +264,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  # for the mailserver
-  #maildata:
-  #mailstate:
-  #maillogs:
-  #roundcube-data:
-
-  # For fuseki
   fuseki-data:
   #judaicalink-generators:
   # for labs, SOLR
