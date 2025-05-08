@@ -37,4 +37,5 @@ WORKDIR /app/loader
 # Set the default command to bash, allowing you to run scripts interactively
 CMD ["/bin/bash"]
 
-#ENTRYPOINT ["python", "loader.py"]
+# loads the data, but takes a while
+ENTRYPOINT ["python", "loader.py"]
