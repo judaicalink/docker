@@ -619,4 +619,5 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/git,windows,osx,linux,pycharm+all,jetbrains+all,node,python,django
 /data/dumps/dumps/
 /data/dumps/
-/dumps/
+/data/cm/
+/solrdata
