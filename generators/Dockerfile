@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Define build arguments for the GitHub repository URL and branch
-ARG GIT_REPO_URL
+ARG GIT_REPO_URL=https://github.com/judaicalink/judaicalink-generators.git
 ARG GIT_BRANCH=master
 RUN git clone --branch $GIT_BRANCH $GIT_REPO_URL .
 
