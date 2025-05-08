@@ -6,7 +6,8 @@ it generates a complete JudaicaLink application.
 # How to use
 
 Clone the repository:
-git clone -b master https://github.com/judaicalink/docker.git
+
+    git clone -b master https://github.com/judaicalink/docker.git
 
 Run the following command:
 
@@ -54,11 +55,7 @@ Fuseki uses a User Interface. Navigate to `http://localhost:3030`. The port may 
 # Components
 * Fuseki
 * Solr
-* Kibana
-* Elasticsearch
 * NGINX
-* Dovecot
-* Postfix
 * Redis
 * Daphne
 * Guincorn
