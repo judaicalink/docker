@@ -1,5 +1,9 @@
+###################################
+# Dockerfile for Pubby-Django
+##################################
+
 # Use a Python base image
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 ca-certificates && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 112695A0E562B32A
