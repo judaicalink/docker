@@ -28,8 +28,8 @@ RUN python -m pip install --upgrade pip && \
 WORKDIR /app
 
 # Define build arguments
-ARG GIT_REPO_URL
-ARG GIT_BRANCH
+ARG GIT_REPO_URL=https://github.com/judaicalink/pubby-django
+ARG GIT_BRANCH=master
 
 # Clone the repository using the specified branch
 #RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
