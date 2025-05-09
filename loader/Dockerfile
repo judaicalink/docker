@@ -17,8 +17,6 @@ RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
 # Upgrade pip and configure pip for TLS/SSL
 RUN python -m pip install --upgrade pip
 
-# install packages
-RUN pip install -r requirements.txt
 
 # Set working directory
 WORKDIR /app
@@ -31,6 +29,9 @@ ARG GIT_BRANCH=master
 RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
 
 WORKDIR /app/loader
+
+# install packages
+RUN pip install -r requirements.txt
 
 # Set the environment variable
 
