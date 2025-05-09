@@ -18,7 +18,7 @@ RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
 RUN python -m pip install --upgrade pip
 
 # install packages
-RUN pip install toml pyyaml rdflib hugo sparqlwrapper
+RUN pip install -r requirements.txt
 
 # Set working directory
 WORKDIR /app
