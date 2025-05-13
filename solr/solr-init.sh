@@ -1,35 +1,59 @@
 #!/bin/bash
 set -e
 
-#solr start -f
+SOLR_URL="http://localhost:8983/solr"
+DATA_DIR="/app/indices"
+CORES=("cm" "cm_meta" "cm_entities" "cm_entity_names" "judaicalink" "judaicalink-beta")
 
-echo "Waiting for Solr to start..."
-timeout 60 bash -c 'until curl -s http://localhost:8983/solr/; do sleep 5; done'
+echo "📦 Creating Solr cores if they do not exist..."
 
-if [ $? -ne 0 ]; then
-  echo "SOLR did not start in time. Exiting."
-  exit 1
-fi
+for core in "${CORES[@]}"; do
+  if [ ! -d "/var/solr/data/$core" ]; then
+    echo "🔧 Creating core: $core"
+    precreate-core "$core"
+  else
+    echo "✅ Core $core already exists"
+  fi
+done
 
-: '
-echo "Creating cores..."
-solr create -c judaicalink #-d _default
-solr create -c judaicalink-beta #-d _default
-solr create -c cm #-d _default
-solr create -c cm_meta #-d _default
-solr create -c cm_entities #-d _default
-solr create -c cm_entity_names #-d _default
+echo "🚀 Starting Solr in background..."
+solr start -f &
+SOLR_PID=$!
 
-echo "Cores created successfully!"
+# Warte, bis Solr verfügbar ist
+echo "⏳ Waiting for Solr to be available..."
+until curl -s "$SOLR_URL/admin/cores?action=STATUS" | grep -q '"numDocs"'; do
+  echo "⏳ Waiting for Solr to be ready..."
+  sleep 2
+done
 
-#solr start -f
-'
 
-echo "Loading JSON data into cores..."
-curl -X POST -H "Content-Type: application/json" \
-     --data-binary @/data.json \
-     "http://localhost:8983/solr/judaicalink/update?commit=true"
+echo "✅ Solr is ready."
 
-curl -X POST -H "Content-Type: application/json" \
-     --data-binary @/data.json \
-     "http://localhost:8983/solr/cm/update?commit=true"
+# Lade alle .json-Dateien, die zu einem Core passen
+for file in "$DATA_DIR"/*.json; do
+  [ -e "$file" ] || continue
+  core_name=$(basename "$file" .json)
+
+  # Prüfe, ob es ein bekannter Core ist
+  if [[ " ${CORES[*]} " == *" $core_name "* ]]; then
+    echo "📥 Uploading $file to core $core_name..."
+    response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+      "$SOLR_URL/$core_name/update?commit=true" \
+      -H "Content-Type: application/json" \
+      --data-binary @"$file")
+
+    if [[ "$response" == "200" ]]; then
+      echo "✅ Successfully uploaded $file to core $core_name"
+    else
+      echo "❌ Failed to upload $file to $core_name (HTTP $response)"
+    fi
+  else
+    echo "⚠️ Skipping $file – no matching core defined"
+  fi
+done
+
+echo "🎉 Initialization complete. Solr will stay running."
+
+# Halte Solr im Vordergrund
+wait $SOLR_PID

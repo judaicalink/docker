@@ -31,6 +31,7 @@ services:
         GIT_BRANCH: master
     container_name: judaicalink-site
     volumes:
+      - ".:/src"
       - data:/data
     volumes_from:
       - data
@@ -112,6 +113,8 @@ services:
         FUSEKI_USER: ${FUSEKI_USER}
         FUSEKI_STORAGE: ${FUSEKI_STORAGE}
     container_name: ontology
+    depends_on:
+      - fuseki
     command: tail -f /dev/null
     networks:
       - judaicalink-webnet
@@ -124,15 +127,18 @@ services:
         GIT_REPO_URL: https://github.com/judaicalink/judaicalink-loader.git
         GIT_BRANCH: master
     container_name: loader
+    env_file:
+      - .env
     command: tail -f /dev/null
     volumes:
       - data:/data
+      #- .:/app
     volumes_from:
       - data
     depends_on:
       - site
-      #- dumps
       - fuseki
+      #- dumps
     extra_hosts:
       - "fuseki:172.17.0.1"
       - "fuseki:127.0.0.1"
@@ -142,20 +148,20 @@ services:
       - judaicalink-webnet
 
   # JudaicaLink Dumps
-  #dumps:
-  #  build:
-  #    context: ./judaicalink-dumps
-  #    args:
-  #      GIT_REPO_URL: https://github.com/judaicalink/dumps.git
-  #      GIT_BRANCH: main
-  #  container_name: dumps
-  #  command: tail -f /dev/null
-  #  volumes:
-  #    - data:/data
-  #  volumes_from:
-  #    - data
-  #  networks:
-  #    - judaicalink-webnet
+  dumps:
+    build:
+      context: ./judaicalink-dumps
+      args:
+        DUMPS_BASE_URL: https://data.judaicalink.org/dumps/
+        DUMPS_SAVE_DIR: /data/dumps/
+    container_name: dumps
+    command: tail -f /dev/null
+    #volumes:
+      #- data:/data
+    volumes_from:
+      - data
+    networks:
+      - judaicalink-webnet
 
   # JudaicaLink Generators
   generators:
@@ -180,23 +186,17 @@ services:
     #    dockerfile: Dockerfile
     image: solr:latest
     container_name: solr
+    command: ["bash", "-c", "/docker-entrypoint-initdb.d/solr-init.sh"]
     ports:
       - "8983:8983"
     volumes:
       - solr_data:/var/solr
-      - ./solr/indices/data.json:/data.json
+      - ./solr/indices/:/app/indices/
       - ./solr/solr-init.sh:/docker-entrypoint-initdb.d/solr-init.sh
     networks:
       - judaicalink-webnet
-    #restart: always
     environment:
       - SOLR_HOME=/var/solr/data
-    entrypoint:
-      - docker-entrypoint.sh
-      - bash
-      - "-c"
-      - "precreate-core cm; precreate-core cm_meta; precreate-core cm_entities; precreate-core cm_entity_names; precreate-core judaicalink; precreate-core judaicalink-beta"
-    command: [ "/bin/bash", "-c", "ls -l /docker-entrypoint-initdb.d && /docker-entrypoint-initdb.d/solr-init.sh" ]
 
   # Fuseki
   fuseki:
@@ -208,6 +208,7 @@ services:
       - "3030:3030"
     volumes:
       - fuseki-data:/fuseki/data
+      #- ./fuseki-config/assembler.ttl:/fuseki-base/configuration/assembler.ttl:ro
     networks:
       - judaicalink-webnet
 
@@ -255,11 +256,31 @@ services:
     volumes:
       - ./data/cm:/data/cm # Mounts the Compact Memory full texts
       - ./data/dumps:/data/dumps # Mounts the dumps from the local folder
-      - smb_share:/data/smbshare # Mounts the SMB share, this is for CM full texts , FIXME: remove /data/cm
+      # - smb_share:/data/smbshare # Mounts the SMB share, this is for CM full texts
       #- data:/data  # Mount persistent volume
     networks:
       - judaicalink-webnet
     restart: unless-stopped
+
+  cron:
+    image: python:3.11-slim
+    container_name: solr-cron
+    volumes:
+      - ./scripts:/app/scripts
+      - ./solr/indices/backup:/app/solr/indices/backup
+      - /mnt/samba:/mnt/samba:rw  # falls du das nutzt
+    environment:
+      - SAMBA_BACKUP_DIR=/mnt/samba/solr-backups
+      - SOLR_URL=http://solr:8983/solr
+    entrypoint: ["/bin/bash", "-c"]
+    command: >
+      apt-get update && apt-get install -y cron && 
+      echo "0 2 * * * python3 /app/scripts/backup_solr_indices.py >> /var/log/solr-backup.log 2>&1" > /etc/crontab && 
+      cron -f
+    depends_on:
+      - solr
+    networks:
+      - judaicalink-webnet
 
 volumes:
   fuseki-data:
