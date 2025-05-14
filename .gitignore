@@ -620,5 +620,5 @@ $RECYCLE.BIN/
 /data/dumps/dumps/
 /data/dumps/
 /data/cm/
-/solrdata
-/solr/indices
+/solrdata/
+/solr/indices/
