@@ -17,7 +17,6 @@ RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
 # Upgrade pip and configure pip for TLS/SSL
 RUN python -m pip install --upgrade pip
 
-
 # Set working directory
 WORKDIR /app
 
@@ -28,15 +27,25 @@ ARG GIT_BRANCH=master
 # Clone the specified branch of the repository
 RUN git clone -b $GIT_BRANCH $GIT_REPO_URL .
 
-WORKDIR /app/loader
-
 # install packages
 RUN pip install -r requirements.txt
 
-# Set the environment variable
+ARG FUSEKI_SERVER=http://fuseki:3030/
+ENV ENDPOINT=${FUSEKI_SERVER}judaicalink
 
-# Set the default command to bash, allowing you to run scripts interactively
-CMD ["/bin/bash"]
+ARG FUSEKI_SERVER
+ARG FUSEKI_USER
+ARG FUSEKI_PASSWORD
 
-# loads the data, but takes a while
-ENTRYPOINT ["python", "loader.py"]
+ENV FUSEKI_SERVER=$FUSEKI_SERVER
+ENV FUSEKI_USER=$FUSEKI_USER
+ENV FUSEKI_PASSWORD=$FUSEKI_PASSWORD
+
+
+# Copy the run script
+COPY run.sh /app/run.sh
+
+# Run script
+RUN chmod +x /app/run.sh
+
+ENTRYPOINT ["/app/run.sh"]
