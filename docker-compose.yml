@@ -275,23 +275,24 @@ services:
 
 # Cron for backups and sync
   cron:
-    image: python:3.11-slim
+    build:
+      context: .
+      dockerfile: cron/Dockerfile
     container_name: cron
     volumes:
-      - ./solr/backup_solr_indices.py:/app/scripts/backup_solr_indices.py
       - ./solr/indices/backup:/app/solr/indices/backup
+      - ./fuseki/data:/fuseki/data:ro
+      - ./data:/data:ro
       #- /mnt/samba:/mnt/samba:rw
+      - ./solr/backup_solr_indices.py:/app/scripts/backup_solr_indices.py
     environment:
-      - SAMBA_BACKUP_DIR=/mnt/samba/solr-backups
+      - SAMBA_BACKUP_DIR=/mnt/samba/
       - SOLR_URL=http://solr:8983/solr
-    entrypoint: ["/bin/bash", "-c"]
-    command: >
-      apt-get update --yes --quiet --allow-releaseinfo-change && apt-get install --yes --quiet --no-install-recommends --fix-missing && apt-get install --yes --quiet cron && 
-      echo "0 2 * * * python3 /app/scripts/backup_solr_indices.py >> /var/log/solr-backup.log 2>&1" > /etc/crontab && 
-      cron -f
-
+      - BACKUP_RETENTION_DAYS=90
+      - ADMIN_EMAIL=admin@example.org
     depends_on:
       - solr
+      - fuseki
     networks:
       - judaicalink-webnet
 

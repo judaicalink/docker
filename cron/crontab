@@ -1,0 +1,8 @@
+# Solr backup daily at 2 AM
+0 2 * * * /app/scripts/backup_solr_indices.py >> /var/log/cron/solr-backup.log 2>&1 || /app/scripts/email_on_failure.sh "Solr Backup Failed"
+
+# Fuseki backup daily at 3 AM
+0 3 * * * /app/scripts/backup_fuseki.sh >> /var/log/cron/fuseki-backup.log 2>&1 || /app/scripts/email_on_failure.sh "Fuseki Backup Failed"
+
+# RDF dump backup daily at 4 AM
+0 4 * * * /app/scripts/backup_triples.sh >> /var/log/cron/triples-backup.log 2>&1 || /app/scripts/email_on_failure.sh "Triples Backup Failed"
