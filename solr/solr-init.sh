@@ -27,7 +27,6 @@ until curl -s "$SOLR_URL/admin/cores?action=STATUS" | grep -q '"numDocs"'; do
   sleep 2
 done
 
-
 echo "✅ Solr is ready."
 
 # Lade alle .json-Dateien, die zu einem Core passen
