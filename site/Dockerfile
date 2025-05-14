@@ -14,24 +14,13 @@ RUN git clone --branch $GIT_BRANCH $GIT_REPO_URL .
 #    git clone --depth 1 --branch $LATEST_TAG https://github.com/GIT_REPO_URL.git . && \
 #    echo "Cloned latest release: $LATEST_TAG"
 
-# Kompiliere die Hugo-Website in das Verzeichnis "public"
-RUN hugo
+# Copy Hugo site
+COPY . .
 
-# Copy the compiled files from Hugo to the data directory
-#COPY /app/ /data/web.judaicalink.org/judaicalink-site/
-# Copy the compiled files from Hugo to the data directory
-#COPY --from=hugo-build /app/ /data/web.judaicalink.org/judaicalink-site/
-#RUN hugo --source=/src/site --destination=/data/web.judaicalink.org/judaicalink-site/content
+# Mach das Skript ausführbar
+RUN chmod +x run.sh
 
+ENTRYPOINT []
 
-# NGINX-Image für die Auslieferung der statischen Dateien
-FROM nginx:alpine
-
-# Entferne den Standard-Inhalt von NGINX
-RUN rm -rf /usr/share/nginx/html/*
-
-# Kopiere die kompilierten Dateien von Hugo in das Standardverzeichnis von NGINX
-COPY --from=hugo-build /app/public /usr/share/nginx/html
-
-RUN mkdir -p /data/web.judaicalink.org/judaicalink-site/
-COPY --from=hugo-build /app/ /data/web.judaicalink.org/judaicalink-site/
+# Run your custom script
+CMD ["./run.sh"]
