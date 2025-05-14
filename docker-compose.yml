@@ -30,8 +30,6 @@ services:
         GIT_REPO_URL: ${SITE_GIT_REPO_URL}
         GIT_BRANCH: ${SITE_GIT_BRANCH}
     container_name: judaicalink-site
-    depends_on:
-      - data
     volumes:
       - data:/data
     ports:
@@ -67,7 +65,6 @@ services:
     env_file: .env  # Loads the other environment variables
     depends_on:
       - postgres
-      - data
       - solr
       - fuseki
       - redis
@@ -148,12 +145,11 @@ services:
       - FUSEKI_USER=${FUSEKI_USER}
       - FUSEKI_PASSWORD=${FUSEKI_PASSWORD}
     volumes:
-      - ./data/dumps:/data/dumps
+      #- ./cm/dumps:/cm/dumps
       - data:/data
     depends_on:
       - site
       - fuseki
-      - data
       - dumps
     extra_hosts:
       - "fuseki:172.17.0.1"
@@ -188,8 +184,6 @@ services:
     container_name: generators
     env_file: .env
     command: tail -f /dev/null
-    depends_on:
-      - data
     volumes:
       - data:/data
     networks:
@@ -262,18 +256,17 @@ services:
     networks:
       - judaicalink-webnet
 
-  # Data
-  data:
-    #build:
-    #  context: ./data
-    image: alpine:latest
-    container_name: data
+  # Compact Memory Data
+  cm:
+    build:
+      context: ./cm
+    #image: alpine:latest
+    container_name: cm
     user: root
     command: tail -f /dev/null # Keeps the container running indefinitely
     volumes:
       #- ./data/cm:/data/cm # Mounts the Compact Memory full texts
       #- ./data/dumps:/data/dumps # Mounts the dumps from the local folder
-      # - smb_share:/data/smbshare # Mounts the SMB share, this is for CM full texts
       - data:/data  # Mount persistent volume
       #- /mnt/samba:/mnt/samba:rw # Mounts the Samba share # TODO: add samba share
     networks:

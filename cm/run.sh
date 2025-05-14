@@ -10,15 +10,15 @@ mkdir -p /app/cm/metadata
 
 # Download TXT files
 echo "⬇️ Downloading TXT..."
-wget -r -nH --cut-dirs=2 --no-parent --reject "index.html*" -P /app/cm/txt https://web.judaicalink.org/fulltexts/txt/
+wget -r -nH --cut-dirs=2 --no-parent --reject "index.html*" -P /app/cm/txt https://labs.judaicalink.org/fulltexts/txt/
 
 # Download XML files
 echo "⬇️ Downloading XML..."
-wget -r -nH --cut-dirs=2 --no-parent --reject "index.html*" -P /app/cm/xml https://web.judaicalink.org/fulltexts/xml/
+wget -r -nH --cut-dirs=2 --no-parent --reject "index.html*" -P /app/cm/xml https://labs.judaicalink.org/fulltexts/xml/
 
 # Download Metadata files (assumed location, can be changed)
 echo "⬇️ Downloading Metadata..."
-wget -r -nH --cut-dirs=2 --no-parent --reject "index.html*" -P /app/cm/metadata https://web.judaicalink.org/fulltexts/metadata/
+wget -r -nH --cut-dirs=2 --no-parent --reject "index.html*" -P /app/cm/metadata https://labs.judaicalink.org/fulltexts/metadata/
 
 # Confirm downloads
 echo "📁 Downloaded structure:"
