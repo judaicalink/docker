@@ -2,7 +2,7 @@
 FROM klakegg/hugo:ext-alpine AS hugo-build
 
 # Arbeitsverzeichnis für Hugo
-WORKDIR /src
+WORKDIR /app
 
 # Klone das GitHub-Repository
 ARG GIT_REPO_URL=https://github.com/judaicalink/judaicalink-site
@@ -17,6 +17,13 @@ RUN git clone --branch $GIT_BRANCH $GIT_REPO_URL .
 # Kompiliere die Hugo-Website in das Verzeichnis "public"
 RUN hugo
 
+# Copy the compiled files from Hugo to the data directory
+#COPY /app/ /data/web.judaicalink.org/judaicalink-site/
+# Copy the compiled files from Hugo to the data directory
+#COPY --from=hugo-build /app/ /data/web.judaicalink.org/judaicalink-site/
+#RUN hugo --source=/src/site --destination=/data/web.judaicalink.org/judaicalink-site/content
+
+
 # NGINX-Image für die Auslieferung der statischen Dateien
 FROM nginx:alpine
 
@@ -24,12 +31,7 @@ FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 
 # Kopiere die kompilierten Dateien von Hugo in das Standardverzeichnis von NGINX
-COPY --from=hugo-build /src/public /usr/share/nginx/html
+COPY --from=hugo-build /app/public /usr/share/nginx/html
 
-RUN mkdir -p /data/judaicalink/web.judaicalink.org/hugo/judaicalink-site/
-
-# Copy the compiled files from Hugo to the data directory
-COPY --from=hugo-build /src/ /data/judaicalink/web.judaicalink.org/hugo/judaicalink-site/
-
-# Exponiere den Standardport von NGINX
-EXPOSE 80
+RUN mkdir -p /data/web.judaicalink.org/judaicalink-site/
+COPY --from=hugo-build /app/ /data/web.judaicalink.org/judaicalink-site/
