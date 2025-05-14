@@ -25,12 +25,14 @@ RUN pip install requests beautifulsoup4 python-dotenv
 # Set the default command to bash, allowing you to run scripts interactively
 CMD ["/bin/bash"]
 
-COPY .env /app/.env
+ARG BASE_URL=https://data.judaicalink.org/dumps/
+ARG SAVE_DIR=/data/dumps/
+
+RUN echo "BASE_URL=$BASE_URL" >> /app/.env && \
+    echo "SAVE_DIR=$SAVE_DIR" >> /app/.env
 
 #  Downloads the dumps from the server for now.
-COPY download_dumps.py /app/download_dumps.py
+COPY downloader.py /app/downloader.py
 
-#COPY /app /data/dumps
-COPY copy_script.sh /app/copy_script.sh
-RUN chmod +x /app/copy_script.sh
-ENTRYPOINT ["/app/copy_script.sh"]
+
+CMD ["python", "/app/downloader.py"]

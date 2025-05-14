@@ -1,7 +1,13 @@
 import os
+import re
+import tarfile
 import requests
-from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
+from bs4 import BeautifulSoup
+from datetime import datetime
+import threading
+import sys
+import time
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -86,11 +92,91 @@ def is_directory(url):
     return url.endswith('/')
 
 
+def spinner():
+    while not spinner_stop:
+        for cursor in '|/-\\':
+            sys.stdout.write(f'\rDownloading... {cursor}')
+            sys.stdout.flush()
+            time.sleep(0.1)
+
+def download_file(url, save_path):
+    global spinner_stop
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    response = requests.get(url, stream=True)
+    total_size = int(response.headers.get('content-length', 0))
+
+    spinner_thread = threading.Thread(target=spinner)
+    spinner_thread.start()
+
+    with open(save_path, 'wb') as f:
+        for chunk in response.iter_content(1024 * 1024):  # 1MB chunks
+            if chunk:
+                f.write(chunk)
+    spinner_stop = True
+    spinner_thread.join()
+    print(f"\nDownloaded to {save_path}")
+    return save_path
+
+def extract_tar_gz(archive_path, extract_to):
+    print(f"Unpacking {archive_path}...")
+    with tarfile.open(archive_path, "r:gz") as tar:
+        safe_members = [
+            m for m in tar.getmembers()
+            if not m.name.startswith(".git") and "/.git/" not in m.name and not m.name.endswith(".git")
+        ]
+        tar.extractall(path=extract_to, members=safe_members)
+    print("Unpacking complete.")
+
+
+def download_complete_dumps(url=BASE_URL, save_directory=SAVE_DIR):
+    global spinner_stop
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        dump_links = []
+
+        pattern = re.compile(r'dumps-complete-(\d{4}-\d{2}-\d{2})\.tar\.gz')
+
+        for link in soup.find_all('a', href=True):
+            href = link['href']
+            match = pattern.search(href)
+            if match:
+                date_str = match.group(1)
+                try:
+                    date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+                    dump_links.append((date_obj, urljoin(url, href)))
+                except ValueError:
+                    continue
+
+        if not dump_links:
+            print("No complete dumps found.")
+            return
+
+        # Find the latest dump
+        latest_date, latest_url = max(dump_links, key=lambda x: x[0])
+        filename = os.path.basename(latest_url)
+        save_path = os.path.join(save_directory, filename)
+
+        print(f"Latest complete dump: {filename}")
+        print("Starting download...")
+
+        spinner_stop = False
+        archive_path = download_file(latest_url, save_path)
+
+        print("Download complete. Starting extraction...")
+        extract_tar_gz(archive_path, save_directory)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch complete dumps from {url}: {e}")
 
 if __name__ == "__main__":
     if not BASE_URL or not BASE_URL.endswith('/'):
         print("Error: Ensure the BASE_URL in the .env file ends with a `/` for proper directory scanning.")
     else:
         print(f"Starting download from {BASE_URL} to {SAVE_DIR}")
-        download_directory(BASE_URL, SAVE_DIR)
+       #download_directory(BASE_URL, SAVE_DIR)
+        download_complete_dumps(BASE_URL, SAVE_DIR)
         print("Download complete.")
+
+
