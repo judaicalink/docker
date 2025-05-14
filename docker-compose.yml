@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - ${POSTGRES_PORT}:5432
@@ -27,19 +27,15 @@ services:
     build:
       context: ./site
       args:
-        GIT_REPO_URL: https://github.com/judaicalink/judaicalink-site
-        GIT_BRANCH: master
+        GIT_REPO_URL: ${SITE_GIT_REPO_URL}
+        GIT_BRANCH: ${SITE_GIT_BRANCH}
     container_name: judaicalink-site
-    volumes:
-      - ".:/src"
-      - data:/data
-    volumes_from:
+    depends_on:
       - data
+    volumes:
+      - data:/data
     ports:
       - "8000:80"
-    expose:
-      - "80"
-      - "443"
     networks:
       - judaicalink-webnet
 
@@ -48,25 +44,27 @@ services:
     build:
       context: ./labs
       args:
-        GIT_REPO_URL: https://github.com/judaicalink/judaicalink-labs.git
-        GIT_BRANCH: solr
-        LOGFILE: ${LOGFILE}
-        DATABASE_URL: ${DATABASE_URL}
-        DATABASE_ENGINE: ${DATABASE_ENGINE}
-        DATABASE_NAME: ${DATABASE_NAME}
-        STATIC_ROOT: ${STATIC_ROOT}
-        MEDIA_ROOT: ${MEDIA_ROOT}
+        GIT_REPO_URL: ${LABS_GIT_REPO_URL}
+        GIT_BRANCH: ${LABS_GIT_BRANCH}
+        LOGFILE: ${LABS_LOGFILE}
+        SECRET_KEY: ${LABS_SECRET_KEY}
+        DJANGO_SETTINGS_MODULE: ${LABS_DJANGO_SETTINGS_MODULE}
+        DEBUG: ${LABS_DEBUG}
+        ALLOWED_HOSTS: ${LABS_ALLOWED_HOSTS}
+        INTERNAL_IPS: ${LABS_INTERNAL_IPS}
+        DATABASE_URL: ${LABS_DATABASE_URL}
+        DATABASE_ENGINE: ${LABS_DATABASE_ENGINE}
+        DATABASE_NAME: ${LABS_DATABASE_NAME}
+        STATIC_ROOT: ${LABS_STATIC_ROOT}
         POSTGRES_HOST: ${POSTGRES_HOST}
         POSTGRES_PORT: ${POSTGRES_PORT}
         POSTGRES_USER: ${POSTGRES_USER}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         POSTGRES_DB: ${POSTGRES_DB}
-
     container_name: labs
     environment:
       DJANGO_SETTINGS_MODULE: labs.settings
-    env_file:
-      - .env  # Loads environment variables including DATABASE_URL
+    env_file: .env  # Loads the other environment variables
     depends_on:
       - postgres
       - data
@@ -74,8 +72,8 @@ services:
       - fuseki
       - redis
       - ontology
-    #volumes_from:
-    #  - data
+    volumes:
+      - data:/data
     ports:
       - "8001:8001" # Expose port for external access
     expose:
@@ -88,9 +86,25 @@ services:
     build:
       context: ./pubby
       args:
-        GIT_REPO_URL: https://github.com/judaicalink/pubby-django
-        GIT_BRANCH: master
+        GIT_REPO_URL: ${PUBBY_GIT_REPO_URL}
+        GIT_BRANCH: ${PUBBY_GIT_BRANCH}
+        LOGFILE: ${PUBBY_LOGFILE}
+        SECRET_KEY: ${PUBBY_SECRET_KEY}
+        DJANGO_SETTINGS_MODULE: ${PUBBY_DJANGO_SETTINGS_MODULE}
+        DEBUG: ${PUBBY_DEBUG}
+        ALLOWED_HOSTS: ${PUBBY_ALLOWED_HOSTS}
+        GND_FILE: ${GND_FILE}
+        GITHUB_TOKEN: ${PUBBY_GITHUB_TOKEN}
+        GITHUB_REPO: ${PUBBY_GITHUB_REPO}
+        DATABASE_URL: ${PUBBY_DATABASE_URL}
+        DATABASE_ENGINE: ${PUBBY_DATABASE_ENGINE}
+        DATABASE_NAME: ${PUBBY_DATABASE_NAME}
+        STATIC_ROOT: ${PUBBY_STATIC_ROOT}
+        STATIC_URL: ${PUBBY_STATIC_URL}
+        MEDIA_ROOT: ${PUBBY_MEDIA_ROOT}
+
     container_name: pubby
+    env_file: .env  # Loads the other environment variables
     depends_on:
       - fuseki
       - solr
@@ -106,8 +120,8 @@ services:
     build:
       context: ./ontology
       args:
-        GIT_REPO_URL: https://github.com/judaicalink/judaicalink-ontology.git
-        GIT_BRANCH: master
+        GIT_REPO_URL: ${ONTOLOGY_GIT_REPO_URL}
+        GIT_BRANCH: ${ONTOLOGY_GIT_BRANCH}
         FUSEKI_PASSWORD: ${FUSEKI_PASSWORD}
         FUSEKI_SERVER: ${FUSEKI_SERVER}
         FUSEKI_USER: ${FUSEKI_USER}
@@ -124,21 +138,23 @@ services:
     build:
       context: ./loader
       args:
-        GIT_REPO_URL: https://github.com/judaicalink/judaicalink-loader.git
-        GIT_BRANCH: master
+        GIT_REPO_URL: ${LOADER_GIT_REPO_URL}
+        GIT_BRANCH: ${LOADER_GIT_BRANCH}
     container_name: loader
-    env_file:
-      - .env
+    env_file: .env
     command: tail -f /dev/null
+    environment:
+      - FUSEKI_SERVER=${FUSEKI_SERVER}
+      - FUSEKI_USER=${FUSEKI_USER}
+      - FUSEKI_PASSWORD=${FUSEKI_PASSWORD}
     volumes:
+      - ./data/dumps:/data/dumps
       - data:/data
-      #- .:/app
-    volumes_from:
-      - data
     depends_on:
       - site
       - fuseki
-      #- dumps
+      - data
+      - dumps
     extra_hosts:
       - "fuseki:172.17.0.1"
       - "fuseki:127.0.0.1"
@@ -150,16 +166,15 @@ services:
   # JudaicaLink Dumps
   dumps:
     build:
-      context: ./judaicalink-dumps
+      context: ./dumps
       args:
-        DUMPS_BASE_URL: https://data.judaicalink.org/dumps/
-        DUMPS_SAVE_DIR: /data/dumps/
+        BASE_URL: ${DUMPS_BASE_URL}
+        SAVE_DIR: ${DUMPS_SAVE_DIR}
+        COPY_DIR: ${DUMPS_COPY_DIR}
     container_name: dumps
     command: tail -f /dev/null
-    #volumes:
-      #- data:/data
-    volumes_from:
-      - data
+    volumes:
+      - data:/data
     networks:
       - judaicalink-webnet
 
@@ -168,14 +183,15 @@ services:
     build:
       context: ./generators
       args:
-        GIT_REPO_URL: https://github.com/judaicalink/judaicalink-generators.git
-        GIT_BRANCH: master
+        GIT_REPO_URL: ${GENERATORS_GIT_REPO_URL}
+        GIT_BRANCH: ${GENERATORS_GIT_BRANCH}
     container_name: generators
+    env_file: .env
     command: tail -f /dev/null
+    depends_on:
+      - data
     volumes:
-      - ./data/generators:/data/generators
-    expose:
-      - "8004:8004"
+      - data:/data
     networks:
       - judaicalink-webnet
 
@@ -191,12 +207,12 @@ services:
       - "8983:8983"
     volumes:
       - solr_data:/var/solr
-      - ./solr/indices/:/app/indices/
+      - ./solr/indices/:/app/indices/ # TODO: change this to samaba share or download the indices
       - ./solr/solr-init.sh:/docker-entrypoint-initdb.d/solr-init.sh
     networks:
       - judaicalink-webnet
     environment:
-      - SOLR_HOME=/var/solr/data
+      - SOLR_HOME=${SOLR_HOME}
 
   # Fuseki
   fuseki:
@@ -207,8 +223,8 @@ services:
     ports:
       - "3030:3030"
     volumes:
-      - fuseki-data:/fuseki/data
-      #- ./fuseki-config/assembler.ttl:/fuseki-base/configuration/assembler.ttl:ro
+      - fuseki_data:/fuseki/data # TODO: check if relevant
+      #- ./fuseki/assembler.ttl:/fuseki-base/configuration/assembler.ttl:ro
     networks:
       - judaicalink-webnet
 
@@ -239,6 +255,7 @@ services:
       - ontology
       - loader
       #- dumps
+      #- cron
       - generators
       - redis
       - postgres
@@ -254,36 +271,39 @@ services:
     user: root
     command: tail -f /dev/null # Keeps the container running indefinitely
     volumes:
-      - ./data/cm:/data/cm # Mounts the Compact Memory full texts
-      - ./data/dumps:/data/dumps # Mounts the dumps from the local folder
+      #- ./data/cm:/data/cm # Mounts the Compact Memory full texts
+      #- ./data/dumps:/data/dumps # Mounts the dumps from the local folder
       # - smb_share:/data/smbshare # Mounts the SMB share, this is for CM full texts
-      #- data:/data  # Mount persistent volume
+      - data:/data  # Mount persistent volume
+      #- /mnt/samba:/mnt/samba:rw # Mounts the Samba share # TODO: add samba share
     networks:
       - judaicalink-webnet
     restart: unless-stopped
 
+# Cron for backups and sync
   cron:
     image: python:3.11-slim
-    container_name: solr-cron
+    container_name: cron
     volumes:
-      - ./scripts:/app/scripts
+      - ./solr/backup_solr_indices.py:/app/scripts/backup_solr_indices.py
       - ./solr/indices/backup:/app/solr/indices/backup
-      - /mnt/samba:/mnt/samba:rw  # falls du das nutzt
+      #- /mnt/samba:/mnt/samba:rw
     environment:
       - SAMBA_BACKUP_DIR=/mnt/samba/solr-backups
       - SOLR_URL=http://solr:8983/solr
     entrypoint: ["/bin/bash", "-c"]
     command: >
-      apt-get update && apt-get install -y cron && 
+      apt-get update --yes --quiet --allow-releaseinfo-change && apt-get install --yes --quiet --no-install-recommends --fix-missing && apt-get install --yes --quiet cron && 
       echo "0 2 * * * python3 /app/scripts/backup_solr_indices.py >> /var/log/solr-backup.log 2>&1" > /etc/crontab && 
       cron -f
+
     depends_on:
       - solr
     networks:
       - judaicalink-webnet
 
 volumes:
-  fuseki-data:
+  fuseki_data:
   solr_data:
     driver: local
   data:
