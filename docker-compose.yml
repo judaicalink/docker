@@ -284,7 +284,6 @@ services:
       - ./fuseki/data:/fuseki/data:ro
       - ./data:/data:ro
       #- /mnt/samba:/mnt/samba:rw
-      - ./solr/backup_solr_indices.py:/app/scripts/backup_solr_indices.py
     environment:
       - SAMBA_BACKUP_DIR=/mnt/samba/
       - SOLR_URL=http://solr:8983/solr
