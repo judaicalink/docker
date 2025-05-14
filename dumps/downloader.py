@@ -8,6 +8,7 @@ from datetime import datetime
 import threading
 import sys
 import time
+import shutil
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -16,6 +17,7 @@ load_dotenv()
 # Read the base URL and save directory from the .env file
 BASE_URL = os.getenv('BASE_URL')
 SAVE_DIR = os.getenv('SAVE_DIR', 'downloads')  # Default to 'downloads' if not set
+COPY_DIR = os.getenv('COPY_DIR', '/data/dumps')  # Default to 'copy' if not set
 
 
 def download_file(url, save_path):
@@ -170,6 +172,30 @@ def download_complete_dumps(url=BASE_URL, save_directory=SAVE_DIR):
     except requests.exceptions.RequestException as e:
         print(f"Failed to fetch complete dumps from {url}: {e}")
 
+
+def copy_dumps(source_dir, target_dir):
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+
+    for item in os.listdir(source_dir):
+        s = os.path.join(source_dir, item)
+        d = os.path.join(target_dir, item)
+
+        if os.path.isdir(s):
+            if os.path.exists(d):
+                # merge contents instead of failing
+                for sub_item in os.listdir(s):
+                    sub_s = os.path.join(s, sub_item)
+                    sub_d = os.path.join(d, sub_item)
+                    if os.path.isdir(sub_s):
+                        shutil.copytree(sub_s, sub_d, dirs_exist_ok=True)
+                    else:
+                        shutil.copy2(sub_s, sub_d)
+            else:
+                shutil.copytree(s, d)
+        else:
+            shutil.copy2(s, d)
+
 if __name__ == "__main__":
     if not BASE_URL or not BASE_URL.endswith('/'):
         print("Error: Ensure the BASE_URL in the .env file ends with a `/` for proper directory scanning.")
@@ -177,6 +203,7 @@ if __name__ == "__main__":
         print(f"Starting download from {BASE_URL} to {SAVE_DIR}")
        #download_directory(BASE_URL, SAVE_DIR)
         download_complete_dumps(BASE_URL, SAVE_DIR)
+        copy_dumps(SAVE_DIR, COPY_DIR)
         print("Download complete.")
 
 

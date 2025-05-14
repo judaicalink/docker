@@ -26,13 +26,15 @@ RUN pip install requests beautifulsoup4 python-dotenv
 CMD ["/bin/bash"]
 
 ARG BASE_URL=https://data.judaicalink.org/dumps/
-ARG SAVE_DIR=/data/dumps/
+ARG SAVE_DIR=.
+ARG COPY_DIR=/data/dumps/
 
 RUN echo "BASE_URL=$BASE_URL" >> /app/.env && \
-    echo "SAVE_DIR=$SAVE_DIR" >> /app/.env
+    echo "SAVE_DIR=$SAVE_DIR" >> /app/.env && \
+    echo "COPY_DIR=$COPY_DIR" >> /app/.env
 
 #  Downloads the dumps from the server for now.
 COPY downloader.py /app/downloader.py
 
 
-CMD ["python", "/app/downloader.py"]
+ENTRYPOINT ["python", "/app/downloader.py"]
