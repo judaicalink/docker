@@ -1,25 +1,19 @@
-# Use a lightweight base image
-FROM alpine:latest
+FROM python:3.11-slim
 
-USER root
+# Install wget, git, etc. if needed
+RUN apt-get update && apt-get install -y wget git bash && rm -rf /var/lib/apt/lists/*
 
-# Install wget to download data
-RUN apk add --no-cache wget
+# Create directories
+RUN mkdir -p /app/cm
 
-# Create the /data/cm directory structure
-RUN mkdir -p /data/cm/txt /data/cm/cm /data/cm/metadata
+# Set workdir
+WORKDIR /app
 
-# Set working directory
-WORKDIR /data/cm
+# Copy run script into container
+COPY run.sh /app/run.sh
 
-# Define environment variables for the download URLs
-ENV URL_TXT=https://web.judaicalink.org/fulltexts/txt/
-ENV URL_CM=https://web.judaicalink.org/fulltexts/cm/
-ENV URL_METADATA=https://web.judaicalink.org/fulltexts/metadata/
+# Make the script executable
+RUN chmod +x /app/run.sh
 
-# Download data into respective folders using wget
-# The -q flag suppresses non-error output, -c continues partially downloaded files
-# --show-progress gives a progress bar for visibility
-CMD wget -q --show-progress -r -np -nH -P metadata $URL_METADATA
-    wget -q --show-progress -r -np -nH -P txt $URL_TXT && \
-    wget -q --show-progress -r -np -nH -P cm $URL_CM && \
+# Default command
+CMD ["/app/run.sh"]
