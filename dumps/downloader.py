@@ -70,6 +70,7 @@ def download_directory(url, save_directory):
             save_path = os.path.join(save_directory, parsed_url.path.lstrip('/'))
             download_file(link, save_path)
 
+
 def get_links(url):
     """Retrieves all links from a given URL (assuming an HTML page)."""
     try:
@@ -101,6 +102,7 @@ def spinner():
             sys.stdout.flush()
             time.sleep(0.1)
 
+
 def download_file(url, save_path):
     global spinner_stop
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
@@ -118,6 +120,7 @@ def download_file(url, save_path):
     spinner_thread.join()
     print(f"\nDownloaded to {save_path}")
     return save_path
+
 
 def extract_tar_gz(archive_path, extract_to):
     print(f"Unpacking {archive_path}...")
@@ -196,14 +199,13 @@ def copy_dumps(source_dir, target_dir):
         else:
             shutil.copy2(s, d)
 
+
 if __name__ == "__main__":
     if not BASE_URL or not BASE_URL.endswith('/'):
         print("Error: Ensure the BASE_URL in the .env file ends with a `/` for proper directory scanning.")
     else:
         print(f"Starting download from {BASE_URL} to {SAVE_DIR}")
-       #download_directory(BASE_URL, SAVE_DIR)
+        # download_directory(BASE_URL, SAVE_DIR)
         download_complete_dumps(BASE_URL, SAVE_DIR)
         copy_dumps(SAVE_DIR, COPY_DIR)
         print("Download complete.")
-
-
