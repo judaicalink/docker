@@ -32,11 +32,6 @@ WORKDIR /app/labs/
 
 # Generate and populate the .env file
 
-# Enable the following line to generate a random SECRET_KEY
-#RUN python -c "import secrets, string; \
-#    alphabet = string.ascii_letters + string.digits + '!@#$%^&*-_+'; \
-#    print('SECRET_KEY=\"' + ''.join(secrets.choice(alphabet) for _ in range(50)) + '\"')" > .env
-
 # Add additional environment variables
 ARG DEBUG=False
 ARG SECRET_KEY
@@ -49,12 +44,13 @@ ARG MEDIA_ROOT
 ARG STATIC_ROOT
 ARG LOGFILE
 
-# POSTGRES
-ARG POSTGRES_USER
-ARG POSTGRES_PASSWORD
-ARG POSTGRES_DB
-ARG POSTGRES_HOST
-ARG POSTGRES_PORT
+# DATABASE
+ARG DATABASE_ENGINE
+ARG DATABASE_USER
+ARG DATABASE_PASSWORD
+ARG DATABASE_DB
+ARG DATABASE_HOST
+ARG DATABASE_PORT
 
 # Redis Cache
 ARG CACHE_URL
@@ -111,6 +107,14 @@ ENV DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 
 ENV NVM_VERSION=22
 
+# Generate a random secret key
+RUN if [ -z "$SECRET_KEY" ];  \
+    then echo "SECRET_KEY is not set. Generating a random one."; \
+    # Generate a random secret key if not provided
+    the SECRET_KEY=$(python -c "import secrets, string; alphabet = string.ascii_letters + string.digits + '@#$%&*-_=+'; print(''.join(secrets.choice(alphabet) for _ in range(50)))"); \
+fi
+
+
 
 # Write the agruments to the .env file
 RUN echo "DEBUG=$DEBUG" >> .env && \
@@ -121,12 +125,12 @@ RUN echo "DEBUG=$DEBUG" >> .env && \
     echo "MEDIA_ROOT=$MEDIA_ROOT" >> .env && \
     echo "STATIC_ROOT=$STATIC_ROOT" >> .env && \
     echo "LOGFILE=$LOGFILE" >> .env && \
-    echo "DATABASE_URL='postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB'" >> .env && \
-    echo "DATABASE_DB=$POSTGRES_DB" >> .env && \
-    echo "DATABASE_USER=$POSTGRES_USER" >> .env && \
-    echo "DATABASE_PASSWORD=$POSTGRES_PASSWORD" >> .env && \
-    echo "DATABASE_HOST=$POSTGRES_HOST" >> .env && \
-    echo "DATABASE_PORT=$POSTGRES_PORT" >> .env && \
+    echo "DATABASE_URL='$DATABASE_HOST://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT/$DATABASE_DB'" >> .env && \
+    echo "DATABASE_DB=$PDATABASE_DB" >> .env && \
+    echo "DATABASE_USER=$DATABASE_USER" >> .env && \
+    echo "DATABASE_PASSWORD=$DATABASE_PASSWORD" >> .env && \
+    echo "DATABASE_HOST=$DATABASE_HOST" >> .env && \
+    echo "DATABASE_PORT=$DATABASE_PORT" >> .env && \
     echo "REDIS_URL='redis://$REDIS_HOST:$REDIS_PORT/0'" >> .env && \
     echo "EMAIL_BACKEND='$EMAIL_BACKEND'" >> .env && \
     echo "EMAIL_HOST='$EMAIL_HOST'" >> .env && \

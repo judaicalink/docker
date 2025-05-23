@@ -50,15 +50,16 @@ services:
         DEBUG: ${LABS_DEBUG}
         ALLOWED_HOSTS: ${LABS_ALLOWED_HOSTS}
         INTERNAL_IPS: ${LABS_INTERNAL_IPS}
-        DATABASE_URL: ${LABS_DATABASE_URL}
         DATABASE_ENGINE: ${LABS_DATABASE_ENGINE}
-        DATABASE_NAME: ${LABS_DATABASE_NAME}
+        DATABASE_DB: ${LABS_DATABASE_DB}
+        DATABASE_USER: ${LABS_DATABASE_USER}
+        DATABASE_PASSWORD: ${LABS_DATABASE_PASSWORD}
+        DATABASE_HOST: ${LABS_DATABASE_HOST}
+        DATABASE_PORT: ${LABS_DATABASE_PORT}
         STATIC_ROOT: ${LABS_STATIC_ROOT}
-        POSTGRES_HOST: ${POSTGRES_HOST}
-        POSTGRES_PORT: ${POSTGRES_PORT}
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        POSTGRES_DB: ${POSTGRES_DB}
+        STATIC_URL: ${LABS_STATIC_URL}
+        MEDIA_ROOT: ${LABS_MEDIA_ROOT}
+        MEDIA_URL: ${LABS_MEDIA_URL}
     container_name: labs
     environment:
       DJANGO_SETTINGS_MODULE: labs.settings
@@ -282,7 +283,7 @@ services:
     volumes:
       - ./solr/indices/backup:/app/solr/indices/backup
       - ./fuseki/data:/fuseki/data:ro
-      - ./data:/data:ro
+      - data:/data:ro
       #- /mnt/samba:/mnt/samba:rw
     environment:
       - SAMBA_BACKUP_DIR=/mnt/samba/
@@ -295,18 +296,53 @@ services:
     networks:
       - judaicalink-webnet
 
+# Monit for monitoring
+  monit:
+    image: maltyxx/monit:latest
+    container_name: monit
+    environment:
+      MONIT_USERNAME: ${MONIT_USERNAME}
+      MONIT_PASSWORD: ${MONIT_PASSWORD}
+    ports:
+      - "2812:2812"  # Monit web interface (optional)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./monit/monitrc:/etc/monitrc:ro
+      - ./data/monit/logs:/var/log/monit
+    depends_on:
+      - nginx
+      - solr
+      - redis
+      - postgres
+      - labs
+      - pubby
+      - fuseki
+    restart: unless-stopped
+
+# AWStats
+#  awstats:
+#    image: phusion/awstats
+#    container_name: awstats
+#    ports:
+#      - "9090:80"
+#    volumes:
+#      - ./awstats/config:/etc/awstats
+#      - ./data/awstats/logs:/var/log/nginx
+#      - ./data/awstats/data:/var/lib/awstats
+#    restart: unless-stopped
+
 volumes:
   fuseki_data:
   solr_data:
     driver: local
   data:
     driver: local
-  smb_share:
-    driver: local
-    driver_opts:
-      type: cifs
-      o: "addr=${SAMBA_SERVER},username=${SAMBA_USER},password=${SAMBA_PASS}"
-      device: "//${SAMBA_SERVER}/${SAMBA_SHARE}"
+  #smb_share:
+  #  driver: local
+  #  driver_opts:
+  #    type: cifs
+  #    o: "addr=${SAMBA_SERVER},username=${SAMBA_USER},password=${SAMBA_PASS}"
+  #    device: "//${SAMBA_SERVER}/${SAMBA_SHARE}"
 
 
 networks:
