@@ -51,19 +51,32 @@ ARG DJANGO_SETTINGS_MODULE=server.settings
 ARG SECRET_KEY
 ARG DEBUG=False
 ARG ALLOWED_HOSTS
-ARG STATIC_URL
-ARG STATIC_ROOT
+ARG STATIC_URL='/static/'
+ARG STATIC_ROOT='/data/data.judaicalink.org/htdocs/static/'
 ARG MEDIA_URL
 ARG MEDIA_ROOT
 ARG LOGFILE
-ARG GND_FILE
+ARG GND_FILE="./pubby/ep_GND_ids.json.gz"
+ARG DATASETS_DIR="/data/web.judaicalink.org/judaicalink-site/content/datasets"
 ARG GITHUB_TOKEN
 ARG GITHUB_REPO
 ARG DATABASE_URL
 ARG DATABASE_ENGINE
 ARG DATABASE_NAME
+ARG DATABASE_USER
+ARG DATABASE_PASSWORD
+ARG DATABASE_HOST
+ARG DATABASE_PORT
+ARG DJANGO_LOG_FILE="/var/log/pubby.log"
+ARG DJANGO_LOG_LEVEL="INFO"
+ARG USE_X_FORWARDED_HOST=True
+ARG USE_X_FORWARDED_PORT=True
 
-#RUN python -c "import secrets, string; alphabet = string.ascii_letters + string.digits + '@#$%&*-_=+'; print('SECRET_KEY=\"' + ''.join(secrets.choice(alphabet) for _ in range(50)) + '\"')" >> localsettings.py
+RUN if [ -z "$SECRET_KEY" ];  \
+    then echo "SECRET_KEY is not set. Generating a random one."; \
+    # Generate a random secret key if not provided
+    the SECRET_KEY=$(python -c "import secrets, string; alphabet = string.ascii_letters + string.digits + '@#$%&*-_=+'; print(''.join(secrets.choice(alphabet) for _ in range(50)))"); \
+fi
 
 RUN echo "DEBUG=$DEBUG" >> localsettings.py && \
     echo "SECRET_KEY='$SECRET_KEY'" >> localsettings.py && \
@@ -78,13 +91,26 @@ RUN echo "DEBUG=$DEBUG" >> localsettings.py && \
     echo "GITHUB_REPO='$GITHUB_REPO'" >> localsettings.py && \
     echo "DATABASE_URL='$DATABASE_URL'" >> localsettings.py && \
     echo "DATABASE_ENGINE='$DATABASE_ENGINE'" >> localsettings.py && \
-    echo "DATABASE_NAME='$DATABASE_NAME'" >> localsettings.py
+    echo "DATABASE_NAME='$DATABASE_NAME'" >> localsettings.py && \
+    echo "DATABASE_USER='$DATABASE_USER'" >> localsettings.py && \
+    echo "DATABASE_PASSWORD='$DATABASE_PASSWORD'" >> localsettings.py && \
+    echo "DATABASE_HOST='$DATABASE_HOST'" >> localsettings.py && \
+    echo "DATABASE_PORT='$DATABASE_PORT'" >> localsettings.py && \
+    echo "DJANGO_LOG_FILE='$DJANGO_LOG_FILE'" >> localsettings.py && \
+    echo "DJANGO_LOG_LEVEL='$DJANGO_LOG_LEVEL'" >> localsettings.py && \
+    echo "USE_X_FORWARDED_HOST=$USE_X_FORWARDED_HOST" >> localsettings.py && \
+    echo "USE_X_FORWARDED_PORT=$USE_X_FORWARDED_PORT" >> localsettings.py && \
+    echo "DATASETS_DIR='$DATASETS_DIR'" >> localsettings.py && \
+    echo "PUBBY_CONFIG = {"pubby": "pubby/config.ttl", "pubby2": "pubby/config-local.ttl", "data":  "pubby/config-judaicalink.ttl", "datasets":  "pubby/config-judaicalink-datasets.ttl", "ontology":  "pubby/config-judaicalink-ontology.ttl"}" >> localsettings.py
+
 
 WORKDIR /app
 
 # Copy wait-for-it script and make it executable
 COPY wait-for-it.sh /app/
 RUN chmod +x /app/wait-for-it.sh
+
+COPY configuration /app/server/pubby/
 
 WORKDIR /app/server
 
