@@ -6,12 +6,12 @@ services:
     restart: always
     shm_size: 128mb
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_PASSWORD: ${LABS_DATABASE_PASSWORD}
+      POSTGRES_USER: ${LABS_DATABASE_USER}
+      POSTGRES_DB: ${LABS_DATABASE_DB}
+      POSTGRES_PORT: ${LABS_DATABASE_PORT}
     ports:
-      - ${POSTGRES_PORT}:5432
+      - ${LABS_DATABASE_PORT}:5432
     networks:
       - judaicalink-webnet
 
@@ -301,35 +301,41 @@ services:
     image: maltyxx/monit:latest
     container_name: monit
     environment:
-      MONIT_USERNAME: ${MONIT_USERNAME}
-      MONIT_PASSWORD: ${MONIT_PASSWORD}
+      - MONIT_USERNAME=${MONIT_USERNAME}
+      - MONIT_PASSWORD=${MONIT_PASSWORD}
     ports:
-      - "2812:2812"  # Monit web interface (optional)
+      - "2812:2812"  # Monit web interface
     volumes:
+      - ./monit/logs:/var/log/monit
+      - ./monit/monitrc:/etc/monit/monitrc:ro
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./monit/monitrc:/etc/monitrc:ro
-      - ./data/monit/logs:/var/log/monit
+    command: ["chmod", "700", "/etc/monit/monitrc"]
     depends_on:
       - nginx
-      - solr
-      - redis
-      - postgres
       - labs
+      - site
       - pubby
-      - fuseki
+    networks:
+      - judaicalink-webnet
     restart: unless-stopped
 
 # AWStats
-#  awstats:
-#    image: phusion/awstats
-#    container_name: awstats
-#    ports:
-#      - "9090:80"
-#    volumes:
-#      - ./awstats/config:/etc/awstats
-#      - ./data/awstats/logs:/var/log/nginx
-#      - ./data/awstats/data:/var/lib/awstats
-#    restart: unless-stopped
+  awstats:
+    image: pabra/awstats:latest
+    container_name: awstats
+    ports:
+      - "3000:80"
+    environment:
+      - TZ="Europe/Berlin"
+    depends_on:
+      - nginx
+      - labs
+      - site
+      - pubby
+    volumes:
+      #- ./awstats/config:/etc/awstats
+      - ./data/awstats/logs:/var/local/log:ro
+    restart: unless-stopped
 
 volumes:
   fuseki_data:

@@ -101,7 +101,7 @@ RUN echo "DEBUG=$DEBUG" >> localsettings.py && \
     echo "USE_X_FORWARDED_HOST=$USE_X_FORWARDED_HOST" >> localsettings.py && \
     echo "USE_X_FORWARDED_PORT=$USE_X_FORWARDED_PORT" >> localsettings.py && \
     echo "DATASETS_DIR='$DATASETS_DIR'" >> localsettings.py && \
-    echo "PUBBY_CONFIG = {"pubby": "pubby/config.ttl", "pubby2": "pubby/config-local.ttl", "data":  "pubby/config-judaicalink.ttl", "datasets":  "pubby/config-judaicalink-datasets.ttl", "ontology":  "pubby/config-judaicalink-ontology.ttl"}" >> localsettings.py
+    echo "PUBBY_CONFIG = {'pubby': 'pubby/config.ttl', 'pubby2': 'pubby/config-local.ttl', 'data':  'pubby/config-judaicalink.ttl', 'datasets': 'pubby/config-judaicalink-datasets.ttl', 'ontology': 'pubby/config-judaicalink-ontology.ttl'}" >> localsettings.py
 
 
 WORKDIR /app

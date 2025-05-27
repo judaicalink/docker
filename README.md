@@ -11,12 +11,14 @@ Clone the repository:
 
 Run the following command:
 
-    docker build -t judaicalink .
+    docker-compose build && docker-compose up -d
 
+This will build the image and start the containers in detached mode.
 
-# How to run
+To run the containers in the foreground, use:
 
-    docker run -d -p 80:80 judaicalink
+    docker-compose up
+
 
 # How to configure
 

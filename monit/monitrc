@@ -2,80 +2,52 @@ set daemon 30
 set logfile /var/log/monit/monit.log
 
 set httpd port 2812 and
-    allow admin:monit
     allow 0.0.0.0/0
 
-#set mailserver smtp.example.org port 587
-#    username "user@example.org" password "yourpassword"
-#    using tlsv1
+set mailserver smtp.judaicalink.org port 587
+    username "b.schnabel@hs-mannheim.org" password "yourpassword"
+    using tlsv1
 
-#set alert admin@example.org
+set alert b.schnabel@hs-mannheim.org
 
 # Check nginx
 check host nginx with address nginx
-  if failed port 80 protocol http then alert
+    if failed port 80 protocol http then alert
+    #if failed port 80 protocol http then exec "/usr/bin/env docker restart nginx"
+
+# Check Site
+check host site with address site
+    if failed port 8000 protocol http then alert
+    #if failed port 8000 protocol http then exec "/usr/bin/env docker restart site"
+
 
 # Check Solr
 check host solr with address solr
-  if failed port 8983 protocol http then alert
+    if failed port 8983 protocol http then alert
+    #if failed port 8983 protocol http then exec "/usr/bin/env docker restart solr"
 
 # Check Redis
-check host redis with address redis
-  if failed port 6379 type TCP then alert
+#check host redis with address redis
+#    if failed port 6379 protocol redis
+#    then alert if failed port 6379 protocol redis
+#    then exec "/usr/bin/env docker restart redis"
 
 # Check PostgreSQL
 check host postgres with address postgres
-  if failed port 5432 type TCP then alert
+    if failed port 5432 protocol pgsql then alert
+    if failed port 5432 protocol pgsql then exec "/usr/bin/env docker restart postgres"
 
-# Check Django (labs)
+# Check labs
 check host labs with address labs
-  if failed port 8001 protocol http then alert
+    if failed port 8001 protocol http then alert
+    #if failed port 8001 protocol http then exec "/usr/bin/env docker restart labs"
 
 # Check Pubby
 check host pubby with address pubby
-  if failed port 8000 protocol http then alert
+    if failed port 8002 protocol http then alert
+    #if failed port 8002 protocol http then exec "/usr/bin/env docker restart pubby"
 
 # Check Fuseki
 check host fuseki with address fuseki
-  if failed port 3030 protocol http then alert
-
-
-check host solr with address solr
-  if failed port 8983 protocol http then restart
-  start program = "/usr/bin/docker restart solr"
-  stop program = "/usr/bin/docker stop solr"
-
-check host fuseki with address fuseki
-  if failed port 3030 protocol http then restart
-  start program = "/usr/bin/docker restart fuseki"
-  stop program = "/usr/bin/docker stop fuseki"
-
-check host site with address site
-  if failed port 8000 protocol http then restart
-  start program = "/usr/bin/docker restart site"
-  stop program = "/usr/bin/docker stop site"
-
-check host labs with address labs
-  if failed port 8001 protocol http then restart
-  start program = "/usr/bin/docker restart labs"
-  stop program = "/usr/bin/docker stop labs"
-
-check host pubby with address pubby
-  if failed port 8000 protocol http then restart
-  start program = "/usr/bin/docker restart pubby"
-  stop program = "/usr/bin/docker stop pubby"
-
-check host redis with address redis
-    if failed port 6379 type TCP then restart
-    start program = "/usr/bin/docker restart redis"
-    stop program = "/usr/bin/docker stop redis"
-
-check host postgres with address postgres
-    if failed port 5432 type TCP then restart
-    start program = "/usr/bin/docker restart postgres"
-    stop program = "/usr/bin/docker stop postgres"
-
-check host nginx with address nginx
-    if failed port 80 protocol http then restart
-    start program = "/usr/bin/docker restart nginx"
-    stop program = "/usr/bin/docker stop nginx"
+    if failed port 3030 protocol http then alert
+    if failed port 3030 protocol http then exec "/usr/bin/env docker restart fuseki"

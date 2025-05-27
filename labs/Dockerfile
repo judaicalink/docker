@@ -198,11 +198,9 @@ RUN npm run cs
 # Wait for dependent services
 COPY wait-for-it.sh /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
-#RUN /app/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -- echo "Postgres is ready"
-
 
 # Run the application using Daphne
-CMD ["/bin/bash", "-c", "/app/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -- python manage.py migrate && python manage.py collectstatic --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
+CMD ["/bin/bash", "-c", "/app/wait-for-it.sh localhost:5432 -- python manage.py migrate && python manage.py collectstatic --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
 
 #CMD ["daphne", "-b", "0.0.0.0", "-p", "8001", "labs.asgi:application"]
 
