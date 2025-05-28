@@ -8,34 +8,34 @@ AWSTATS DATA FILE 7.9 (build 20230108)
 # update).
 BEGIN_MAP 28
 POS_GENERAL 2021                
-POS_TIME 2702                
-POS_VISITOR 6009                
-POS_DAY 6246                
-POS_DOMAIN 3268                
-POS_LOGIN 3501                
-POS_ROBOT 3656                
-POS_WORMS 3788                
-POS_EMAILSENDER 3919                
-POS_EMAILRECEIVER 4062                
-POS_SESSION 6332                
-POS_FILESIZE 6615                
-POS_SIDER 6485                
-POS_FILETYPES 4197                
-POS_DOWNLOADS 4371                
-POS_OS 4450                
-POS_BROWSER 4548                
-POS_SCREENSIZE 4638                
-POS_UNKNOWNREFERER 4712                
-POS_UNKNOWNREFERERBROWSER 4827                
-POS_ORIGIN 4937                
-POS_SEREFERRALS 5074                
-POS_PAGEREFS 5218                
-POS_SEARCHWORDS 5392                
-POS_KEYWORDS 5544                
-POS_MISC 2366                
-POS_ERRORS 5603                
-POS_CLUSTER 3357                
-POS_SIDER_404 5700                
+POS_TIME 2700                
+POS_VISITOR 6027                
+POS_DAY 6247                
+POS_DOMAIN 3286                
+POS_LOGIN 3519                
+POS_ROBOT 3674                
+POS_WORMS 3806                
+POS_EMAILSENDER 3937                
+POS_EMAILRECEIVER 4080                
+POS_SESSION 6333                
+POS_FILESIZE 6616                
+POS_SIDER 6486                
+POS_FILETYPES 4215                
+POS_DOWNLOADS 4389                
+POS_OS 4468                
+POS_BROWSER 4566                
+POS_SCREENSIZE 4656                
+POS_UNKNOWNREFERER 4730                
+POS_UNKNOWNREFERERBROWSER 4845                
+POS_ORIGIN 4955                
+POS_SEREFERRALS 5092                
+POS_PAGEREFS 5236                
+POS_SEARCHWORDS 5410                
+POS_KEYWORDS 5562                
+POS_MISC 2364                
+POS_ERRORS 5621                
+POS_CLUSTER 3375                
+POS_SIDER_404 5718                
 END_MAP
 
 # LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
@@ -47,11 +47,11 @@ END_MAP
 # MonthHostsKnown   = Number of hosts known
 # MonthHostsUnKnown = Number of hosts unknown
 BEGIN_GENERAL 8
-LastLine 20250528154157 1805 199081 3934523813292
+LastLine 20250528185655 2285 242759 3934607764399
 FirstTime 20250528090728
-LastTime 20250528154157
-LastUpdate 20250528154203 20 0 20 0 0
-TotalVisits 4                   
+LastTime 20250528185655
+LastUpdate 20250528191939 0 0 0 0 0
+TotalVisits 5                   
 TotalUnique 3                   
 MonthHostsKnown 0                   
 MonthHostsUnknown 3                   
@@ -59,16 +59,16 @@ END_GENERAL
 
 # Misc ID - Pages - Hits - Bandwidth
 BEGIN_MISC 10
-TotalMisc 0 0 0
-QuickTimeSupport 0 0 0
-JavaEnabled 0 0 0
 WindowsMediaPlayerSupport 0 0 0
-RealPlayerSupport 0 0 0
-AddToFavourites 0 0 0
-PDFSupport 0 0 0
+FlashSupport 0 0 0
 JavascriptDisabled 0 0 0
 DirectorSupport 0 0 0
-FlashSupport 0 0 0
+RealPlayerSupport 0 0 0
+QuickTimeSupport 0 0 0
+PDFSupport 0 0 0
+AddToFavourites 0 0 0
+TotalMisc 0 0 0
+JavaEnabled 0 0 0
 END_MISC
 
 # Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
@@ -88,10 +88,10 @@ BEGIN_TIME 24
 12 243 265 3120421 62 64 744
 13 238 238 2929304 0 0 0
 14 238 238 2929304 0 0 0
-15 154 154 1887033 0 0 0
-16 0 0 0 0 0 0
+15 218 218 2674745 0 0 0
+16 232 232 2855456 0 0 0
 17 0 0 0 0 0 0
-18 0 0 0 0 0 0
+18 184 184 2251970 0 0 0
 19 0 0 0 0 0 0
 20 0 0 0 0 0 0
 21 0 0 0 0 0 0
@@ -102,7 +102,7 @@ END_TIME
 # Domain - Pages - Hits - Bandwidth
 # The 10 first Pages must be first (order not required for others)
 BEGIN_DOMAIN 1
-ip 1526 1572 21220882
+ip 2006 2052 27116020
 END_DOMAIN
 
 # Cluster ID - Pages - Hits - Bandwidth
@@ -136,13 +136,13 @@ END_EMAILRECEIVER
 
 # Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
 BEGIN_FILETYPES 7
+css 4 0 0 0
+Unknown 2 0 0 0
 mp4 1 0 0 0
 js 20 384730 0 0
-png 16 848862 0 0
+html 2004 24504253 0 0
 jpg 5 0 0 0
-Unknown 2 0 0 0
-html 1524 18609115 0 0
-css 4 0 0 0
+png 16 848862 0 0
 END_FILETYPES
 
 # Downloads - Hits - Bandwidth
@@ -153,13 +153,13 @@ END_DOWNLOADS
 # OS ID - Hits
 BEGIN_OS ID - Hits - Pages 2
 macosx15 61 14
-Unknown 1512 1512
+Unknown 1992 1992
 END_OS
 
 # Browser ID - Hits - Pages
 BEGIN_BROWSER 2
+Unknown 1992 1992
 chrome136.0.0.0 61 14
-Unknown 1512 1512
 END_BROWSER
 
 # Screen size - Hits
@@ -168,17 +168,17 @@ END_SCREENSIZE
 
 # Unknown referer OS - Last visit date
 BEGIN_UNKNOWNREFERER 1
-Monit/5.29.0 20250528154157
+Monit/5.29.0 20250528185655
 END_UNKNOWNREFERER
 
 # Unknown referer Browser - Last visit date
 BEGIN_UNKNOWNREFERERBROWSER 1
-Monit/5.29.0 20250528154157
+Monit/5.29.0 20250528185655
 END_UNKNOWNREFERERBROWSER
 
 # Origin - Pages - Hits 
 BEGIN_ORIGIN 6
-From0 1522 1522
+From0 2002 2002
 From1 0 0
 From2 0 0
 From3 2 2
@@ -220,33 +220,33 @@ END_SIDER_404
 # [Start date of last visit] and [Last page of last visit] are saved only if session is not finished
 # The 10 first Hits must be first (order not required for others)
 BEGIN_VISITOR 3
-172.18.0.14 1394 1394 17140554 20250528150855 20250528090728 /
-172.18.0.16 118 118 1443945 20250528154157 20250528151237 /
+172.18.0.14 1394 1394 17140554 20250528150855
+172.18.0.16 598 598 7339083 20250528185655 20250528181103 /
 192.168.65.1 14 61 2636383 20250528124609
 END_VISITOR
 
 # Date - Pages - Hits - Bandwidth - Visits
 BEGIN_DAY 1
-20250528 1526 1572 22599057 4
+20250528 2006 2052 28494195 5
 END_DAY
 
 # Session range - Number of visits
 BEGIN_SESSION 2
-1h+ 1
+1h+ 3
 30mn-1h 1
 END_SESSION
 
 # URL - Pages - Bandwidth - Entry - Exit
 # The 10 first Pages must be first (order not required for others)
 BEGIN_SIDER 3
-/ 1522 18609115 4 1
+/ 2002 24504253 5 3
 /datasets/ 2 0 0 1
 /img/site.webmanifest 2 0 0 0
 END_SIDER
 
 # Payload Range - Payload Frequency
 BEGIN_FILESIZE 3
-5K+ 1527
+2K-5K 4
 0-44 275
-2K-5K 3
+5K+ 2006
 END_FILESIZE

@@ -316,6 +316,7 @@ services:
     command: >
       /bin/sh -c "
         chmod 700 /etc/monit &&
+        chmod 600 /etc/monit/monitrc &&
         monit -I -c /etc/monit/monitrc
       "
     depends_on:
@@ -329,7 +330,7 @@ services:
 
 # AWStats
   awstats:
-    image: pabra/awstats:latest
+    build: ./awstats
     container_name: awstats
     ports:
       - "3000:80"
@@ -341,10 +342,7 @@ services:
       - site
       - pubby
     volumes:
-      - ./awstats/config/awstats.site.conf:/etc/awstats/awstats.site.conf
-      - ./awstats/config/awstats.labs.conf:/etc/awstats/awstats.labs.conf
-      - ./awstats/config/awstats.pubby.conf:/etc/awstats/awstats.pubby.conf
-      - ./awstats/config/awstats_httpd.conf:/usr/local/apache2/conf/awstats_httpd.conf
+      - ./awstats/config:/etc/awstats
       - ./data/awstats/logs:/var/local/log:ro
       - ./data/awstats/data:/var/lib/awstats
     command: >
