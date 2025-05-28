@@ -313,7 +313,11 @@ services:
       - ./data/monit/logs:/var/log/monit
       - ./monit/monitrc:/etc/monit/monitrc:ro
       - /var/run/docker.sock:/var/run/docker.sock
-    #command: ["chmod", "700", "/etc/monit/monitrc"]
+    command: >
+      /bin/sh -c "
+        chmod 700 /etc/monit &&
+        monit -I -c /etc/monit/monitrc
+      "
     depends_on:
       - nginx
       - labs
