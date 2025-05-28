@@ -8,34 +8,34 @@ AWSTATS DATA FILE 7.9 (build 20230108)
 # update).
 BEGIN_MAP 28
 POS_GENERAL 2016                
-POS_TIME 2698                
-POS_VISITOR 6049                
-POS_DAY 6324                
-POS_DOMAIN 3302                
-POS_LOGIN 3535                
-POS_ROBOT 3690                
-POS_WORMS 3822                
-POS_EMAILSENDER 3953                
-POS_EMAILRECEIVER 4096                
-POS_SESSION 6410                
-POS_FILESIZE 6702                
-POS_SIDER 6572                
-POS_FILETYPES 4231                
-POS_DOWNLOADS 4411                
-POS_OS 4490                
-POS_BROWSER 4588                
-POS_SCREENSIZE 4678                
-POS_UNKNOWNREFERER 4752                
-POS_UNKNOWNREFERERBROWSER 4867                
-POS_ORIGIN 4977                
-POS_SEREFERRALS 5114                
-POS_PAGEREFS 5258                
-POS_SEARCHWORDS 5432                
-POS_KEYWORDS 5584                
-POS_MISC 2362                
-POS_ERRORS 5643                
-POS_CLUSTER 3391                
-POS_SIDER_404 5740                
+POS_TIME 2696                
+POS_VISITOR 6047                
+POS_DAY 6322                
+POS_DOMAIN 3300                
+POS_LOGIN 3533                
+POS_ROBOT 3688                
+POS_WORMS 3820                
+POS_EMAILSENDER 3951                
+POS_EMAILRECEIVER 4094                
+POS_SESSION 6408                
+POS_FILESIZE 6700                
+POS_SIDER 6570                
+POS_FILETYPES 4229                
+POS_DOWNLOADS 4409                
+POS_OS 4488                
+POS_BROWSER 4586                
+POS_SCREENSIZE 4676                
+POS_UNKNOWNREFERER 4750                
+POS_UNKNOWNREFERERBROWSER 4865                
+POS_ORIGIN 4975                
+POS_SEREFERRALS 5112                
+POS_PAGEREFS 5256                
+POS_SEARCHWORDS 5430                
+POS_KEYWORDS 5582                
+POS_MISC 2360                
+POS_ERRORS 5641                
+POS_CLUSTER 3389                
+POS_SIDER_404 5738                
 END_MAP
 
 # LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
@@ -50,7 +50,7 @@ BEGIN_GENERAL 8
 LastLine 20250528205238 2698 283074 13788091645667
 FirstTime 20250528090728
 LastTime 20250528205230
-LastUpdate 20250528210342 19 0 19 0 0
+LastUpdate 20250528221942 0 0 0 0 0
 TotalVisits 7                   
 TotalUnique 4                   
 MonthHostsKnown 0                   
@@ -59,16 +59,16 @@ END_GENERAL
 
 # Misc ID - Pages - Hits - Bandwidth
 BEGIN_MISC 10
-DirectorSupport 0 0 0
-RealPlayerSupport 0 0 0
-FlashSupport 0 0 0
 AddToFavourites 0 0 0
-PDFSupport 0 0 0
-JavaEnabled 0 0 0
-TotalMisc 0 0 0
-QuickTimeSupport 0 0 0
-JavascriptDisabled 0 0 0
 WindowsMediaPlayerSupport 0 0 0
+RealPlayerSupport 0 0 0
+PDFSupport 0 0 0
+DirectorSupport 0 0 0
+FlashSupport 0 0 0
+TotalMisc 0 0 0
+JavaEnabled 0 0 0
+JavascriptDisabled 0 0 0
+QuickTimeSupport 0 0 0
 END_MISC
 
 # Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
@@ -136,13 +136,13 @@ END_EMAILRECEIVER
 
 # Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
 BEGIN_FILETYPES 7
-css 6 0 0 0
-mp4 1 1378175 0 0
 Unknown 2 0 0 0
 jpg 7 0 0 0
+css 6 0 0 0
 png 24 848862 0 0
 js 25 416800 0 0
 html 2399 29365913 0 0
+mp4 1 1378175 0 0
 END_FILETYPES
 
 # Downloads - Hits - Bandwidth
@@ -152,14 +152,14 @@ END_DOWNLOADS
 
 # OS ID - Hits
 BEGIN_OS ID - Hits - Pages 2
-Unknown 2386 2386
 macosx15 79 15
+Unknown 2386 2386
 END_OS
 
 # Browser ID - Hits - Pages
 BEGIN_BROWSER 2
-Unknown 2386 2386
 chrome136.0.0.0 79 15
+Unknown 2386 2386
 END_BROWSER
 
 # Screen size - Hits
@@ -248,7 +248,7 @@ END_SIDER
 
 # Payload Range - Payload Frequency
 BEGIN_FILESIZE 3
+2K-5K 4
 0-44 292
 5K+ 2402
-2K-5K 4
 END_FILESIZE

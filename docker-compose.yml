@@ -357,6 +357,9 @@ services:
         awstats_updateall.pl now -configdir=/etc/awstats -logdir=/var/local/log &&
         exec /usr/local/apache2/bin/apachectl -DFOREGROUND
       "
+    networks:
+      - judaicalink-webnet
+
     restart: unless-stopped
 
 volumes:

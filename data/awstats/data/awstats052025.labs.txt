@@ -1,6 +1,6 @@
 AWSTATS DATA FILE 7.9 (build 20230108)
 # If you remove this file, all statistics for date 202505 will be lost/reset.
-# Last config file used to build this data file was /etc/awstats/awstats.site.conf.
+# Last config file used to build this data file was /etc/awstats/awstats.labs.conf.
 
 # Position (offset in bytes) in this file for beginning of each section for
 # direct I/O access. If you made changes somewhere in this file, you should
@@ -8,34 +8,34 @@ AWSTATS DATA FILE 7.9 (build 20230108)
 # update).
 BEGIN_MAP 28
 POS_GENERAL 2021                
-POS_TIME 2701                
-POS_VISITOR 6046                
-POS_DAY 6321                
-POS_DOMAIN 3305                
-POS_LOGIN 3538                
-POS_ROBOT 3693                
-POS_WORMS 3825                
-POS_EMAILSENDER 3956                
-POS_EMAILRECEIVER 4099                
-POS_SESSION 6407                
-POS_FILESIZE 6699                
-POS_SIDER 6569                
-POS_FILETYPES 4234                
-POS_DOWNLOADS 4408                
-POS_OS 4487                
-POS_BROWSER 4585                
-POS_SCREENSIZE 4675                
-POS_UNKNOWNREFERER 4749                
-POS_UNKNOWNREFERERBROWSER 4864                
-POS_ORIGIN 4974                
-POS_SEREFERRALS 5111                
-POS_PAGEREFS 5255                
-POS_SEARCHWORDS 5429                
-POS_KEYWORDS 5581                
-POS_MISC 2365                
-POS_ERRORS 5640                
-POS_CLUSTER 3394                
-POS_SIDER_404 5737                
+POS_TIME 2688                
+POS_VISITOR 5731                
+POS_DAY 5867                
+POS_DOMAIN 3194                
+POS_LOGIN 3422                
+POS_ROBOT 3577                
+POS_WORMS 3709                
+POS_EMAILSENDER 3840                
+POS_EMAILRECEIVER 3983                
+POS_SESSION 5948                
+POS_FILESIZE 6168                
+POS_SIDER 6085                
+POS_FILETYPES 4118                
+POS_DOWNLOADS 4202                
+POS_OS 4250                
+POS_BROWSER 4330                
+POS_SCREENSIZE 4402                
+POS_UNKNOWNREFERER 4476                
+POS_UNKNOWNREFERERBROWSER 4563                
+POS_ORIGIN 4645                
+POS_SEREFERRALS 4777                
+POS_PAGEREFS 4921                
+POS_SEARCHWORDS 5069                
+POS_KEYWORDS 5221                
+POS_MISC 2352                
+POS_ERRORS 5280                
+POS_CLUSTER 3278                
+POS_SIDER_404 5411                
 END_MAP
 
 # LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
@@ -47,28 +47,28 @@ END_MAP
 # MonthHostsKnown   = Number of hosts known
 # MonthHostsUnKnown = Number of hosts unknown
 BEGIN_GENERAL 8
-LastLine 20250528205238 2698 283074 13788091645667
-FirstTime 20250528090728
-LastTime 20250528205230
-LastUpdate 20250528221943 0 0 0 0 0
-TotalVisits 7                   
-TotalUnique 4                   
+LastLine 20250528221621 102 20331 11956555854954
+FirstTime 0
+LastTime 20250528221621
+LastUpdate 20250528221942 28 0 28 0 0
+TotalVisits 1                   
+TotalUnique 1                   
 MonthHostsKnown 0                   
-MonthHostsUnknown 4                   
+MonthHostsUnknown 1                   
 END_GENERAL
 
 # Misc ID - Pages - Hits - Bandwidth
 BEGIN_MISC 10
-JavaEnabled 0 0 0
-RealPlayerSupport 0 0 0
-WindowsMediaPlayerSupport 0 0 0
-QuickTimeSupport 0 0 0
-PDFSupport 0 0 0
-DirectorSupport 0 0 0
-AddToFavourites 0 0 0
 JavascriptDisabled 0 0 0
-TotalMisc 0 0 0
 FlashSupport 0 0 0
+DirectorSupport 0 0 0
+TotalMisc 0 0 0
+RealPlayerSupport 0 0 0
+JavaEnabled 0 0 0
+AddToFavourites 0 0 0
+QuickTimeSupport 0 0 0
+WindowsMediaPlayerSupport 0 0 0
+PDFSupport 0 0 0
 END_MISC
 
 # Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
@@ -82,27 +82,27 @@ BEGIN_TIME 24
 6 0 0 0 0 0 0
 7 0 0 0 0 0 0
 8 0 0 0 0 0 0
-9 200 223 6146108 114 114 1368
-10 215 216 2657583 32 32 384
-11 238 238 2929304 22 22 264
-12 243 265 3120421 62 64 744
-13 238 238 2929304 0 0 0
-14 238 238 2929304 0 0 0
-15 218 218 2674745 0 0 0
-16 232 232 2855456 0 0 0
+9 0 0 0 0 0 0
+10 0 0 0 0 0 0
+11 0 0 0 0 0 0
+12 0 0 0 0 0 0
+13 0 0 0 0 0 0
+14 0 0 0 0 0 0
+15 0 0 0 0 0 0
+16 0 0 0 0 0 0
 17 0 0 0 0 0 0
-18 184 184 2251970 0 0 0
-19 90 90 1107720 0 0 0
-20 305 322 3786010 0 1 0
-21 0 0 0 0 0 0
-22 0 0 0 0 0 0
+18 0 0 0 0 0 0
+19 0 0 0 0 0 0
+20 0 0 0 10 10 71486
+21 37 37 948458 42 42 797692
+22 21 21 538314 1 1 559
 23 0 0 0 0 0 0
 END_TIME
 
 # Domain - Pages - Hits - Bandwidth
 # The 10 first Pages must be first (order not required for others)
 BEGIN_DOMAIN 1
-ip 2401 2464 32009750
+ip 58 58 1486772
 END_DOMAIN
 
 # Cluster ID - Pages - Hits - Bandwidth
@@ -135,31 +135,22 @@ BEGIN_EMAILRECEIVER 0
 END_EMAILRECEIVER
 
 # Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
-BEGIN_FILETYPES 7
-js 25 416800 0 0
-Unknown 2 0 0 0
-jpg 7 0 0 0
-png 24 848862 0 0
-mp4 1 0 0 0
-css 6 0 0 0
-html 2399 29365913 0 0
+BEGIN_FILETYPES 1
+html 58 1486772 0 0
 END_FILETYPES
 
 # Downloads - Hits - Bandwidth
-BEGIN_DOWNLOADS 1
-/img/Animation.mp4 0 1 1378175
+BEGIN_DOWNLOADS 0
 END_DOWNLOADS
 
 # OS ID - Hits
-BEGIN_OS ID - Hits - Pages 2
-Unknown 2386 2386
-macosx15 79 15
+BEGIN_OS ID - Hits - Pages 1
+macosx15 58 58
 END_OS
 
 # Browser ID - Hits - Pages
-BEGIN_BROWSER 2
-chrome136.0.0.0 79 15
-Unknown 2386 2386
+BEGIN_BROWSER 1
+chrome136.0.0.0 58 58
 END_BROWSER
 
 # Screen size - Hits
@@ -167,22 +158,20 @@ BEGIN_SCREENSIZE 0
 END_SCREENSIZE
 
 # Unknown referer OS - Last visit date
-BEGIN_UNKNOWNREFERER 1
-Monit/5.29.0 20250528204324
+BEGIN_UNKNOWNREFERER 0
 END_UNKNOWNREFERER
 
 # Unknown referer Browser - Last visit date
-BEGIN_UNKNOWNREFERERBROWSER 1
-Monit/5.29.0 20250528204324
+BEGIN_UNKNOWNREFERERBROWSER 0
 END_UNKNOWNREFERERBROWSER
 
 # Origin - Pages - Hits 
 BEGIN_ORIGIN 6
-From0 2397 2397
+From0 58 58
 From1 0 0
 From2 0 0
-From3 2 2
-From4 2 66
+From3 0 0
+From4 0 0
 From5 0 0
 END_ORIGIN
 
@@ -192,8 +181,7 @@ END_SEREFERRALS
 
 # External page referers - Pages - Hits
 # The 10 first Pages must be first (order not required for others)
-BEGIN_PAGEREFS 1
-http://localhost:8000 2 2
+BEGIN_PAGEREFS 0
 END_PAGEREFS
 
 # Search keyphrases - Number of search
@@ -207,48 +195,45 @@ BEGIN_KEYWORDS 0
 END_KEYWORDS
 
 # Errors - Hits - Bandwidth
-BEGIN_ERRORS 2
-400 230 2760
+BEGIN_ERRORS 5
 499 2 0
+301 1 169
+502 30 16770
+404 8 192
+400 12 852606
 END_ERRORS
 
 # URL with 404 errors - Hits - Last URL referrer
-BEGIN_SIDER_404 0
+BEGIN_SIDER_404 1
+/labs/ 8 -
 END_SIDER_404
 
 # Host - Pages - Hits - Bandwidth - Last visit date - [Start date of last visit] - [Last page of last visit]
 # [Start date of last visit] and [Last page of last visit] are saved only if session is not finished
 # The 10 first Hits must be first (order not required for others)
-BEGIN_VISITOR 4
-172.18.0.14 1394 1394 17140554 20250528150855
-172.18.0.16 796 796 9776067 20250528204324 20250528181103 /
-192.168.65.1 207 271 5043897 20250528205230 20250528195010 /
-172.18.0.7 4 4 49232 20250528194841
+BEGIN_VISITOR 1
+192.168.65.1 58 58 1486772 20250528221621 20250528211508 /labs/
 END_VISITOR
 
 # Date - Pages - Hits - Bandwidth - Visits
 BEGIN_DAY 1
-20250528 2401 2464 33387925 7
+20250528 58 58 1486772 1
 END_DAY
 
 # Session range - Number of visits
-BEGIN_SESSION 3
-1h+ 3
-30mn-1h 1
-0s-30s 1
+BEGIN_SESSION 0
 END_SESSION
 
 # URL - Pages - Bandwidth - Entry - Exit
 # The 10 first Pages must be first (order not required for others)
-BEGIN_SIDER 3
-/ 2397 29365913 7 4
-/datasets/ 2 0 0 1
-/img/site.webmanifest 2 0 0 0
+BEGIN_SIDER 1
+/labs/ 58 1486772 1 0
 END_SIDER
 
 # Payload Range - Payload Frequency
-BEGIN_FILESIZE 3
-5K+ 2402
-0-44 292
-2K-5K 4
+BEGIN_FILESIZE 4
+100-500 1
+0-44 10
+5K+ 70
+500-1K 30
 END_FILESIZE
