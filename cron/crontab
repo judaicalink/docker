@@ -8,4 +8,4 @@
 0 4 * * * /app/scripts/backup_triples.sh >> /var/log/cron/triples-backup.log 2>&1 || /app/scripts/email_on_failure.sh "Triples Backup Failed"
 
 # Update AWStats every 30 minutes
-*/30 * * * * /update-awstats.sh >> /var/log/cron.log 2>&1
+*/30 * * * * /app/update-awstats.sh >> /var/log/cron.log 2>&1
