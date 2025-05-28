@@ -50,3 +50,8 @@ check host pubby with address pubby
 check host fuseki with address fuseki
     if failed port 3030 protocol http then alert
     if failed port 3030 protocol http then exec "/usr/bin/env docker restart fuseki"
+
+# Check AWStats
+#check host awstats with address awstats
+#    if failed port 80 protocol http then alert
+#    if failed port 80 protocol http then exec "/usr/bin/env docker restart awstats"

@@ -241,6 +241,7 @@ services:
     container_name: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./data/awstats/logs:/var/local/log
     ports:
       - "80:80"
       - "443:443"
@@ -309,7 +310,7 @@ services:
     ports:
       - "2812:2812"  # Monit web interface
     volumes:
-      - ./monit/logs:/var/log/monit
+      - ./data/monit/logs:/var/log/monit
       - ./monit/monitrc:/etc/monit/monitrc:ro
       - /var/run/docker.sock:/var/run/docker.sock
     #command: ["chmod", "700", "/etc/monit/monitrc"]
@@ -336,8 +337,20 @@ services:
       - site
       - pubby
     volumes:
-      #- ./awstats/config:/etc/awstats
+      - ./awstats/config/awstats.site.conf:/etc/awstats/awstats.site.conf
+      - ./awstats/config/awstats.labs.conf:/etc/awstats/awstats.labs.conf
+      - ./awstats/config/awstats.pubby.conf:/etc/awstats/awstats.pubby.conf
+      - ./awstats/config/awstats_httpd.conf:/usr/local/apache2/conf/awstats_httpd.conf
       - ./data/awstats/logs:/var/local/log:ro
+      - ./data/awstats/data:/var/lib/awstats
+    command: >
+      /bin/sh -c "
+        mkdir -p /var/lib/awstats &&
+        chown -R www-data:www-data /etc/awstats &&
+        chown -R www-data:www-data /var/lib/awstats &&
+        awstats_updateall.pl now -configdir=/etc/awstats -logdir=/var/local/log &&
+        exec /usr/local/apache2/bin/apachectl -DFOREGROUND
+      "
     restart: unless-stopped
 
 volumes:

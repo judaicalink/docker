@@ -19,6 +19,10 @@ COPY ./cron/email_on_failure.sh /app/scripts/
 COPY ./cron/crontab /etc/cron.d/judaicalink-cron
 COPY ./cron/logrotate.conf /etc/logrotate.d/judaicalink
 
+COPY crontab /etc/crontabs/root
+COPY update-awstats.sh /update-awstats.sh
+RUN chmod +x /update-awstats.sh
+
 RUN chmod 0644 /etc/cron.d/judaicalink-cron && crontab /etc/cron.d/judaicalink-cron
 RUN chmod +x /app/scripts/*.sh
 
