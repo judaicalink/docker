@@ -311,12 +311,10 @@ services:
       - "2812:2812"  # Monit web interface
     volumes:
       - ./data/monit/logs:/var/log/monit
-      - ./monit/monitrc:/etc/monit/monitrc:ro
+      - ./monit/monit.cfg:/etc/monit/monit.d/monit.cfg
       - /var/run/docker.sock:/var/run/docker.sock
     command: >
       /bin/sh -c "
-        chmod 700 /etc/monit &&
-        chmod 600 /etc/monit/monitrc &&
         monit -I -c /etc/monit/monitrc
       "
     depends_on:
