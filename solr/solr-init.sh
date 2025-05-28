@@ -10,9 +10,26 @@ echo "📦 Creating Solr cores if they do not exist..."
 for core in "${CORES[@]}"; do
   if [ ! -d "/var/solr/data/$core" ]; then
     echo "🔧 Creating core: $core"
-    precreate-core "$core"
+
+    if [ -f "$HOST_SCHEMA_DIR/$CORE/conf/managed-schema.xml" ]; then
+    echo "Copying schema for $CORE..."
+    cp "$HOST_SCHEMA_DIR/$CORE/conf/managed-schema.xml" "$CORE_DIR/conf/managed-schema"
+  else
+    echo "Warning: Schema for $CORE not found."
+        precreate-core "$core"
+  fi
+
+    #echo "name=$CORE" > "$CORE_DIR/core.properties"
   else
     echo "✅ Core $core already exists"
+  fi
+done
+
+echo "Loading cores into Solr..."
+
+for core in "${CORES[@]}"; do
+  if [ ! -f \"/var/solr/data/$core/core.properties\" ]; then
+    echo "name=$core" > "/var/solr/data/$core/core.properties"
   fi
 done
 
