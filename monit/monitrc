@@ -4,8 +4,8 @@ set logfile /var/log/monit/monit.log
 set httpd port 2812 and
     allow 0.0.0.0/0
 
-set mailserver smtp.judaicalink.org port 587
-    username "b.schnabel@hs-mannheim.org" password "yourpassword"
+set mailserver smtp.example.org port 587
+    username "example@example.org" password "yourpassword"
     using tlsv1
 
 set alert b.schnabel@hs-mannheim.org
@@ -13,24 +13,23 @@ set alert b.schnabel@hs-mannheim.org
 # Check nginx
 check host nginx with address nginx
     if failed port 80 protocol http then alert
-    #if failed port 80 protocol http then exec "/usr/bin/env docker restart nginx"
+    if failed port 80 protocol http then exec "/usr/bin/env docker restart nginx"
 
 # Check Site
 check host site with address site
-    if failed port 8000 protocol http then alert
-    #if failed port 8000 protocol http then exec "/usr/bin/env docker restart site"
+    if failed port 80 protocol http then alert
+    if failed port 80 protocol http then exec "/usr/bin/env docker restart site"
 
 
 # Check Solr
 check host solr with address solr
     if failed port 8983 protocol http then alert
-    #if failed port 8983 protocol http then exec "/usr/bin/env docker restart solr"
+    if failed port 8983 protocol http then exec "/usr/bin/env docker restart solr"
 
 # Check Redis
-#check host redis with address redis
-#    if failed port 6379 protocol redis
-#    then alert if failed port 6379 protocol redis
-#    then exec "/usr/bin/env docker restart redis"
+check host redis with address host.docker.internal
+    if failed port 6379 type tcp then alert
+    if failed port 6379 type tcp then exec "/usr/bin/env docker restart redis"
 
 # Check PostgreSQL
 check host postgres with address postgres
@@ -39,13 +38,13 @@ check host postgres with address postgres
 
 # Check labs
 check host labs with address labs
-    if failed port 8001 protocol http then alert
-    #if failed port 8001 protocol http then exec "/usr/bin/env docker restart labs"
+    if failed port 8001 type tcp then alert
+    if failed port 8001 type tcp then exec "/usr/bin/env docker restart labs"
 
 # Check Pubby
 check host pubby with address pubby
-    if failed port 8002 protocol http then alert
-    #if failed port 8002 protocol http then exec "/usr/bin/env docker restart pubby"
+    if failed port 8000 type tcp then alert
+    if failed port 8000 type tcp then exec "/usr/bin/env docker restart pubby"
 
 # Check Fuseki
 check host fuseki with address fuseki

@@ -60,6 +60,7 @@ services:
         STATIC_URL: ${LABS_STATIC_URL}
         MEDIA_ROOT: ${LABS_MEDIA_ROOT}
         MEDIA_URL: ${LABS_MEDIA_URL}
+        SOLR_URL: ${SOLR_SERVER}
     container_name: labs
     environment:
       DJANGO_SETTINGS_MODULE: labs.settings
@@ -201,13 +202,15 @@ services:
     ports:
       - "8983:8983"
     volumes:
-      - solr_data:/var/solr
+      #- solr_data:/var/solr
       - ./solr/indices/:/app/indices/ # TODO: change this to samaba share or download the indices
       - ./solr/solr-init.sh:/docker-entrypoint-initdb.d/solr-init.sh
     networks:
       - judaicalink-webnet
     environment:
-      - SOLR_HOME=${SOLR_HOME}
+      - SOLR_URL=${SOLR_SERVER:-http://localhost:8983/solr}
+      - SOLR_USER=${SOLR_USER}
+      - SOLR_PASSWORD=${SOLR_PASSWORD}
 
   # Fuseki
   fuseki:
@@ -287,7 +290,7 @@ services:
       #- /mnt/samba:/mnt/samba:rw
     environment:
       - SAMBA_BACKUP_DIR=/mnt/samba/
-      - SOLR_URL=http://solr:8983/solr
+      - SOLR_URL=${SOLR_URL}
       - BACKUP_RETENTION_DAYS=90
       - ADMIN_EMAIL=admin@example.org
     depends_on:
@@ -309,7 +312,7 @@ services:
       - ./monit/logs:/var/log/monit
       - ./monit/monitrc:/etc/monit/monitrc:ro
       - /var/run/docker.sock:/var/run/docker.sock
-    command: ["chmod", "700", "/etc/monit/monitrc"]
+    #command: ["chmod", "700", "/etc/monit/monitrc"]
     depends_on:
       - nginx
       - labs
