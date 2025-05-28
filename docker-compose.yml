@@ -328,7 +328,7 @@ services:
 
 # AWStats
   awstats:
-    build: ./awstats
+    image: pabra/awstats:latest
     container_name: awstats
     ports:
       - "3000:80"

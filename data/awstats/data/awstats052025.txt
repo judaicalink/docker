@@ -1,41 +1,41 @@
 AWSTATS DATA FILE 7.9 (build 20230108)
 # If you remove this file, all statistics for date 202505 will be lost/reset.
-# Last config file used to build this data file was /etc/awstats/awstats.site.conf.
+# Last config file used to build this data file was /etc/awstats/awstats.conf.
 
 # Position (offset in bytes) in this file for beginning of each section for
 # direct I/O access. If you made changes somewhere in this file, you should
 # also remove completely the MAP section (AWStats will rewrite it at next
 # update).
 BEGIN_MAP 28
-POS_GENERAL 2021                
-POS_TIME 2703                
-POS_VISITOR 6048                
-POS_DAY 6323                
-POS_DOMAIN 3307                
-POS_LOGIN 3540                
-POS_ROBOT 3695                
-POS_WORMS 3827                
-POS_EMAILSENDER 3958                
-POS_EMAILRECEIVER 4101                
-POS_SESSION 6409                
-POS_FILESIZE 6701                
-POS_SIDER 6571                
-POS_FILETYPES 4236                
-POS_DOWNLOADS 4410                
-POS_OS 4489                
-POS_BROWSER 4587                
-POS_SCREENSIZE 4677                
-POS_UNKNOWNREFERER 4751                
-POS_UNKNOWNREFERERBROWSER 4866                
-POS_ORIGIN 4976                
-POS_SEREFERRALS 5113                
-POS_PAGEREFS 5257                
-POS_SEARCHWORDS 5431                
-POS_KEYWORDS 5583                
-POS_MISC 2367                
-POS_ERRORS 5642                
-POS_CLUSTER 3396                
-POS_SIDER_404 5739                
+POS_GENERAL 2016                
+POS_TIME 2698                
+POS_VISITOR 6049                
+POS_DAY 6324                
+POS_DOMAIN 3302                
+POS_LOGIN 3535                
+POS_ROBOT 3690                
+POS_WORMS 3822                
+POS_EMAILSENDER 3953                
+POS_EMAILRECEIVER 4096                
+POS_SESSION 6410                
+POS_FILESIZE 6702                
+POS_SIDER 6572                
+POS_FILETYPES 4231                
+POS_DOWNLOADS 4411                
+POS_OS 4490                
+POS_BROWSER 4588                
+POS_SCREENSIZE 4678                
+POS_UNKNOWNREFERER 4752                
+POS_UNKNOWNREFERERBROWSER 4867                
+POS_ORIGIN 4977                
+POS_SEREFERRALS 5114                
+POS_PAGEREFS 5258                
+POS_SEARCHWORDS 5432                
+POS_KEYWORDS 5584                
+POS_MISC 2362                
+POS_ERRORS 5643                
+POS_CLUSTER 3391                
+POS_SIDER_404 5740                
 END_MAP
 
 # LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
@@ -50,7 +50,7 @@ BEGIN_GENERAL 8
 LastLine 20250528205238 2698 283074 13788091645667
 FirstTime 20250528090728
 LastTime 20250528205230
-LastUpdate 20250528210343 19 0 19 0 0
+LastUpdate 20250528210342 19 0 19 0 0
 TotalVisits 7                   
 TotalUnique 4                   
 MonthHostsKnown 0                   
@@ -59,16 +59,16 @@ END_GENERAL
 
 # Misc ID - Pages - Hits - Bandwidth
 BEGIN_MISC 10
-JavaEnabled 0 0 0
-WindowsMediaPlayerSupport 0 0 0
-AddToFavourites 0 0 0
-TotalMisc 0 0 0
 DirectorSupport 0 0 0
-FlashSupport 0 0 0
-JavascriptDisabled 0 0 0
-QuickTimeSupport 0 0 0
 RealPlayerSupport 0 0 0
+FlashSupport 0 0 0
+AddToFavourites 0 0 0
 PDFSupport 0 0 0
+JavaEnabled 0 0 0
+TotalMisc 0 0 0
+QuickTimeSupport 0 0 0
+JavascriptDisabled 0 0 0
+WindowsMediaPlayerSupport 0 0 0
 END_MISC
 
 # Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
@@ -136,12 +136,12 @@ END_EMAILRECEIVER
 
 # Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
 BEGIN_FILETYPES 7
-mp4 1 0 0 0
 css 6 0 0 0
+mp4 1 1378175 0 0
+Unknown 2 0 0 0
+jpg 7 0 0 0
 png 24 848862 0 0
 js 25 416800 0 0
-jpg 7 0 0 0
-Unknown 2 0 0 0
 html 2399 29365913 0 0
 END_FILETYPES
 
@@ -208,8 +208,8 @@ END_KEYWORDS
 
 # Errors - Hits - Bandwidth
 BEGIN_ERRORS 2
-499 2 0
 400 230 2760
+499 2 0
 END_ERRORS
 
 # URL with 404 errors - Hits - Last URL referrer
@@ -233,9 +233,9 @@ END_DAY
 
 # Session range - Number of visits
 BEGIN_SESSION 3
-0s-30s 1
 30mn-1h 1
 1h+ 3
+0s-30s 1
 END_SESSION
 
 # URL - Pages - Bandwidth - Entry - Exit
@@ -248,7 +248,7 @@ END_SIDER
 
 # Payload Range - Payload Frequency
 BEGIN_FILESIZE 3
-2K-5K 4
 0-44 292
 5K+ 2402
+2K-5K 4
 END_FILESIZE
