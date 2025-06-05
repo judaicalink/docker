@@ -624,3 +624,4 @@ $RECYCLE.BIN/
 solr/indices/
 /solr/solr_indices/
 solr/indices/backup/
+/data/
