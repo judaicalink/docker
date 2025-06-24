@@ -626,3 +626,4 @@ solr/indices/
 solr/indices/backup/
 /data/
 /pubby/configuration/localsettings.py
+/data/awstats/data/
