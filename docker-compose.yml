@@ -295,7 +295,7 @@ services:
       #- /mnt/samba:/mnt/samba:rw
     environment:
       - SAMBA_BACKUP_DIR=/mnt/samba/
-      - SOLR_URL=${SOLR_URL}
+      - SOLR_URL=${SOLR_SERVER}
       - BACKUP_RETENTION_DAYS=90
       - ADMIN_EMAIL=admin@example.org
     depends_on:
