@@ -189,10 +189,13 @@ RUN rm -rf package-lock.json
 
 # Install npm dependencies and build the frontend
 RUN npm install
+
+# Build the frontend assets
 RUN npm run build
-RUN npm run cs
 
 # Collect static files
+RUN npm run cs
+
 #RUN python manage.py collectstatic --no-input
 
 # Wait for dependent services
