@@ -111,6 +111,8 @@ services:
       - solr
       - redis
       - postgres
+    volumes:
+        - data:/data
     expose:
       - "8000"
     ports:
