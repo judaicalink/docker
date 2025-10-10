@@ -3,7 +3,7 @@ services:
   postgres:
     image: "postgres:latest"
     container_name: postgres
-    restart: always
+    # restart: always
     shm_size: 128mb
     environment:
       POSTGRES_PASSWORD: ${LABS_DATABASE_PASSWORD}
@@ -18,7 +18,7 @@ services:
   adminer:
     image: adminer
     container_name: adminer
-    restart: always
+    # restart: always
     ports:
       - 8081:8080
 
@@ -280,7 +280,7 @@ services:
       #- /mnt/samba:/mnt/samba:rw # Mounts the Samba share # TODO: add samba share
     networks:
       - judaicalink-webnet
-    restart: unless-stopped
+    # restart: unless-stopped
 
 # Cron for backups and sync
   cron:
@@ -328,7 +328,7 @@ services:
       - pubby
     networks:
       - judaicalink-webnet
-    restart: unless-stopped
+    # restart: unless-stopped
 
 # AWStats
   awstats:
@@ -360,7 +360,7 @@ services:
     networks:
       - judaicalink-webnet
 
-    restart: unless-stopped
+    # restart: unless-stopped
 
 volumes:
   fuseki_data:
