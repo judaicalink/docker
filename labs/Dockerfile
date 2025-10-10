@@ -177,9 +177,12 @@ ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 RUN pip install -r requirements.txt
 RUN echo $(ls -1 /app/labs)
 
+
 WORKDIR /app/labs
+
+# Install Node.js and npm using nvm
 RUN node -v
-RUN nvm current
+RUN nvm use current
 RUN npm -v
 
 # Delete node_modules and package-lock.json for a clean install
@@ -189,10 +192,13 @@ RUN rm -rf package-lock.json
 
 # Install npm dependencies and build the frontend
 RUN npm install
+
+# Build the frontend assets
 RUN npm run build
-RUN npm run cs
 
 # Collect static files
+#RUN npm run cs
+
 #RUN python manage.py collectstatic --no-input
 
 # Wait for dependent services
@@ -200,7 +206,7 @@ COPY wait-for-it.sh /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
 
 # Run the application using Daphne
-CMD ["/bin/bash", "-c", "/app/wait-for-it.sh localhost:5432 -- python manage.py migrate && python manage.py collectstatic --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
+CMD ["/bin/bash", "-c", "/app/wait-for-it.sh localhost:5432 -- python manage.py migrate --no-input && python manage.py collectstatic --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
 
 #CMD ["daphne", "-b", "0.0.0.0", "-p", "8001", "labs.asgi:application"]
 
