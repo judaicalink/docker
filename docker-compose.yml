@@ -34,7 +34,7 @@ services:
     volumes:
       - data:/data
     expose:
-      - "8001"
+      - "80"
     ports:
       - "8000:80"
     networks:
