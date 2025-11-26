@@ -1,5 +1,5 @@
 # Base image with Python
-FROM python:3.11-slim AS base
+FROM python:3.12-slim AS base
 
 # Install system dependencies
 RUN apt-get update --yes --quiet --allow-releaseinfo-change && \
@@ -104,6 +104,9 @@ ARG GEONAMES_API_USER
 # Set environment variables
 ENV PYTHONPATH="/app:$PYTHONPATH"
 ENV DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+ENV DJANGO_SUPERUSER_USERNAME=$DJANGO_SUPERUSER_USERNAME
+ENV DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
+ENV DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL
 
 ENV NVM_VERSION=22
 
@@ -175,7 +178,7 @@ ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 
 # Install Python dependencies
 RUN pip install -r requirements.txt
-RUN echo $(ls -1 /app/labs)
+#RUN echo $(ls -1 /app/labs)
 
 
 WORKDIR /app/labs
@@ -199,14 +202,16 @@ RUN npm run build
 # Collect static files
 #RUN npm run cs
 
-#RUN python manage.py collectstatic --no-input
-
 # Wait for dependent services
 COPY wait-for-it.sh /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
 
+#ENTRYPOINT ["tail"]
+#CMD ["-f","/dev/null"]
+
+
 # Run the application using Daphne
-CMD ["/bin/bash", "-c", "/app/wait-for-it.sh localhost:5432 -- python manage.py migrate --no-input && python manage.py collectstatic --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
+CMD ["/bin/bash", "-c", "/app/wait-for-it.sh localhost:5432 -- python manage.py makemigrations --no-input && python manage.py migrate --no-input && python manage.py collectstatic --no-input && python manage.py createsuperuser --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
 
 #CMD ["daphne", "-b", "0.0.0.0", "-p", "8001", "labs.asgi:application"]
 
