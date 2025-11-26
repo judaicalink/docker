@@ -109,11 +109,10 @@ RUN chmod +x /app/wait-for-it.sh
 COPY configuration /app/server/pubby/
 
 WORKDIR /app/server
-ENTRYPOINT ["tail"]
-CMD ["-f","/dev/null"]
+
 
 # Run the wait-for-it script before starting the app with gunicorn
-CMD ["/bin/bash", "-c", "/app/wait-for-it.sh postgres:5432 -- python manage.py migrate && python manage.py collectstatic --no-input && gunicorn --bind 0.0.0.0:8002 server.wsgi:application"]
+CMD ["/bin/bash", "-c", "/app/wait-for-it.sh postgres:5432 -- python manage.py migrate && python manage.py collectstatic --no-input && gunicorn --bind 0.0.0.0:8000 server.wsgi:application"]
 
 # Expose the port on which the app will run
-EXPOSE 8002
+EXPOSE 8000
