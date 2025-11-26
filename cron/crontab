@@ -12,3 +12,4 @@
 
 # Sync Fuseki to SOLR once a month
 0 0 1 * * /app/scripts/sync_fuseki_to_solr.sh >> /var/log/cron/sync-fuseki-solr.log 2>&1 || /app/scripts/email_on_failure.sh "Sync Fuseki to Solr Failed"
+
