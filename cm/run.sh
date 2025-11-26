@@ -28,9 +28,10 @@ find /app/cm
 # Copy to volume
 echo "📦 Copying everything to /data/cm/..."
 mkdir -p /data/cm/
-cp -r /app/cm/* /data/cm/
+
+cp -r /app/cm $CM_DATA_DIR
 
 echo "✅ All data copied."
 
 # Keep the container running (optional for debugging)
-tail -f /dev/null
+#tail -f /dev/null
