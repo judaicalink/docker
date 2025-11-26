@@ -201,7 +201,7 @@ services:
       args:
         GIT_REPO_URL: ${GENERATORS_GIT_REPO_URL}
         GIT_BRANCH: ${GENERATORS_GIT_BRANCH}
-        JL_FUSEKI_URL: ${FUSEKI_SERVER+"/judaicalink"}
+        FUSEKI_SERVER: ${FUSEKI_SERVER}
     container_name: generators
     env_file: .env
     command: tail -f /dev/null
