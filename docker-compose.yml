@@ -284,6 +284,7 @@ services:
   cm:
     build:
       context: ./cm
+      network: host
     #image: alpine:latest
     container_name: cm
     user: root
