@@ -44,6 +44,7 @@ services:
   labs:
     build:
       context: ./labs
+      network: host
       args:
         GIT_REPO_URL: ${LABS_GIT_REPO_URL}
         GIT_BRANCH: ${LABS_GIT_BRANCH}
@@ -98,6 +99,7 @@ services:
   pubby:
     build:
       context: ./pubby
+      network: host
       args:
         GIT_REPO_URL: ${PUBBY_GIT_REPO_URL}
         GIT_BRANCH: ${PUBBY_GIT_BRANCH}
@@ -136,6 +138,7 @@ services:
   ontology:
     build:
       context: ./ontology
+      network: host
       args:
         GIT_REPO_URL: ${ONTOLOGY_GIT_REPO_URL}
         GIT_BRANCH: ${ONTOLOGY_GIT_BRANCH}
@@ -154,6 +157,7 @@ services:
   loader:
     build:
       context: ./loader
+      network: host
       args:
         GIT_REPO_URL: ${LOADER_GIT_REPO_URL}
         GIT_BRANCH: ${LOADER_GIT_BRANCH}
@@ -182,6 +186,7 @@ services:
   dumps:
     build:
       context: ./dumps
+      network: host
       args:
         BASE_URL: ${DUMPS_BASE_URL}
         SAVE_DIR: ${DUMPS_SAVE_DIR}
@@ -198,6 +203,7 @@ services:
   generators:
     build:
       context: ./generators
+      network: host
       args:
         GIT_REPO_URL: ${GENERATORS_GIT_REPO_URL}
         GIT_BRANCH: ${GENERATORS_GIT_BRANCH}
@@ -303,6 +309,7 @@ services:
     build:
       context: .
       dockerfile: cron/Dockerfile
+      network: host
     container_name: cron
     volumes:
       - ./solr/indices/backup:/app/solr/indices/backup
