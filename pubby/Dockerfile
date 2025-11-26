@@ -3,11 +3,7 @@
 ##################################
 
 # Use a Python base image
-FROM python:3.11-slim
-
-RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 ca-certificates && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 112695A0E562B32A
-
+FROM python:3.12-slim
 
 # Install required system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -113,6 +109,7 @@ RUN chmod +x /app/wait-for-it.sh
 COPY configuration /app/server/pubby/
 
 WORKDIR /app/server
+
 
 # Run the wait-for-it script before starting the app with gunicorn
 CMD ["/bin/bash", "-c", "/app/wait-for-it.sh postgres:5432 -- python manage.py migrate && python manage.py collectstatic --no-input && gunicorn --bind 0.0.0.0:8000 server.wsgi:application"]

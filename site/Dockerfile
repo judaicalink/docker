@@ -17,10 +17,12 @@ RUN git clone --branch $GIT_BRANCH $GIT_REPO_URL .
 # Copy Hugo site
 COPY . .
 
-# Mach das Skript ausführbar
+COPY run.sh /app/run.sh
+
+# Make script executable
 RUN chmod +x run.sh
 
 ENTRYPOINT []
 
-# Run your custom script
-CMD ["./run.sh"]
+# Run custom script
+CMD ["/app/run.sh"]

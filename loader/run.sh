@@ -21,9 +21,12 @@ fi
 echo "📋 Listing all datasets..."
 curl -s -u $FUSEKI_USER:$FUSEKI_PASSWORD "$FUSEKI_SERVER$/datasets"
 
-echo "🚀 Running loader..."
+echo "🚀 Running loader script ..."
 python /app/loader/loader.py || echo "⚠️ Loader failed, but container will stay alive."
 
-echo "✅ Loader finished."
 
-tail -f /dev/null  # Container will stay alive
+echo "📦 Copying loader files to shared volume..."
+cp -r /app/loader/ $LOADER_DIR
+
+echo "✅ Loader finished."
+#tail -f /dev/null  # Container will stay alive
