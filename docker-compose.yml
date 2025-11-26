@@ -59,11 +59,22 @@ services:
         DATABASE_PASSWORD: ${LABS_DATABASE_PASSWORD}
         DATABASE_HOST: ${LABS_DATABASE_HOST}
         DATABASE_PORT: ${LABS_DATABASE_PORT}
+        DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+        DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+        DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
         STATIC_ROOT: ${LABS_STATIC_ROOT}
         STATIC_URL: ${LABS_STATIC_URL}
         MEDIA_ROOT: ${LABS_MEDIA_ROOT}
         MEDIA_URL: ${LABS_MEDIA_URL}
         SOLR_URL: ${SOLR_SERVER}
+        LABS_ROOT: ${LABS_ROOT}
+        LABS_GIT_WEBROOT: ${LABS_GIT_WEBROOT}
+        LABS_DUMPS_WEBROOT: ${LABS_DUMPS_WEBROOT}
+        LABS_DUMPS_LOCAL: ${LABS_DUMPS_LOCAL}
+        JUDAICALINK_LOADER_PATH: ${JUDAICALINK_LOADER_PATH}
+        GENERATORS_BASE_DIR: ${GENERATORS_BASE_DIR}
+        ENDPOINT: ${ENDPOINT}
+
     container_name: labs
     environment:
       DJANGO_SETTINGS_MODULE: labs.settings
@@ -148,13 +159,12 @@ services:
         GIT_BRANCH: ${LOADER_GIT_BRANCH}
     container_name: loader
     env_file: .env
-    command: tail -f /dev/null
+    #command: tail -f /dev/null
     environment:
       - FUSEKI_SERVER=${FUSEKI_SERVER}
       - FUSEKI_USER=${FUSEKI_USER}
       - FUSEKI_PASSWORD=${FUSEKI_PASSWORD}
     volumes:
-      #- ./cm/dumps:/cm/dumps
       - data:/data
     depends_on:
       - site
@@ -177,9 +187,10 @@ services:
         SAVE_DIR: ${DUMPS_SAVE_DIR}
         COPY_DIR: ${DUMPS_COPY_DIR}
     container_name: dumps
-    command: tail -f /dev/null
+    #command: tail -f /dev/null
     volumes:
       - data:/data
+      #- ./data/dumps:/data/dumps
     networks:
       - judaicalink-webnet
 
@@ -190,6 +201,7 @@ services:
       args:
         GIT_REPO_URL: ${GENERATORS_GIT_REPO_URL}
         GIT_BRANCH: ${GENERATORS_GIT_BRANCH}
+        JL_FUSEKI_URL: ${FUSEKI_SERVER+"/judaicalink"}
     container_name: generators
     env_file: .env
     command: tail -f /dev/null
@@ -275,7 +287,7 @@ services:
     #image: alpine:latest
     container_name: cm
     user: root
-    command: tail -f /dev/null # Keeps the container running indefinitely
+    #command: tail -f /dev/null # Keeps the container running indefinitely
     volumes:
       #- ./data/cm:/data/cm # Mounts the Compact Memory full texts
       #- ./data/dumps:/data/dumps # Mounts the dumps from the local folder
@@ -283,7 +295,7 @@ services:
       #- /mnt/samba:/mnt/samba:rw # Mounts the Samba share # TODO: add samba share
     networks:
       - judaicalink-webnet
-    restart: unless-stopped
+    #restart: unless-stopped
 
 # Cron for backups and sync
   cron:
