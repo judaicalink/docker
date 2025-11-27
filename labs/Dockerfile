@@ -204,6 +204,7 @@ RUN npm run build
 
 # Wait for dependent services
 COPY wait-for-it.sh /app/wait-for-it.sh
+copy startup.sh /app/startup.sh
 RUN chmod +x /app/wait-for-it.sh
 
 #ENTRYPOINT ["tail"]
@@ -211,7 +212,7 @@ RUN chmod +x /app/wait-for-it.sh
 
 
 # Run the application using Daphne
-CMD ["/bin/bash", "-c", "/app/wait-for-it.sh localhost:5432 -- python manage.py makemigrations --no-input && python manage.py migrate --no-input && python manage.py collectstatic --no-input && python manage.py createsuperuser --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
+CMD ["/bin/bash", "/app/startup.sh"]
 
 #CMD ["daphne", "-b", "0.0.0.0", "-p", "8001", "labs.asgi:application"]
 

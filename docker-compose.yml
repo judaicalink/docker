@@ -174,9 +174,9 @@ services:
       - site
       - fuseki
       - dumps
-    extra_hosts:
-      - "fuseki:172.17.0.1"
-      - "fuseki:127.0.0.1"
+        # extra_hosts:
+        #   - "fuseki:172.17.0.1"
+        #   - "fuseki:127.0.0.1"
     links:
       - fuseki
     networks:
@@ -227,7 +227,7 @@ services:
     ports:
       - "8983:8983"
     volumes:
-      #- solr_data:/var/solr
+      - solr_data:/var/solr
       - ./solr/indices/:/app/indices/ # TODO: change this to samba share or download the indices
       - ./solr/solr-init.sh:/docker-entrypoint-initdb.d/solr-init.sh
     networks:
@@ -246,7 +246,7 @@ services:
     ports:
       - "3030:3030"
     volumes:
-      - fuseki_data:/fuseki/data # TODO: check if relevant
+      - fuseki_data:/fuseki # TODO: check if relevant
       #- ./fuseki/assembler.ttl:/fuseki-base/configuration/assembler.ttl:ro
     networks:
       - judaicalink-webnet
@@ -351,6 +351,8 @@ services:
       - pubby
     networks:
       - judaicalink-webnet
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     # restart: unless-stopped
 
 # AWStats
