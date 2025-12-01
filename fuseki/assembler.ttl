@@ -3,7 +3,7 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 <#dataset> a tdb2:DatasetTDB2 ;
-    tdb2:location "/fuseki/data/databases/judaicalink" .
+    tdb2:location "/fuseki-base/databases/judaicalink" .
 
 [] a fuseki:Service ;
     fuseki:name "judaicalink" ;

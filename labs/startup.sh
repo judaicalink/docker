@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -eio pipefail
-/app/wait-for-it.sh localhost:5432
+/app/wait-for-it.sh postgress:5432
 
 python manage.py makemigrations --no-input
 python manage.py migrate --no-input

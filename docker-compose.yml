@@ -10,16 +10,27 @@ services:
       POSTGRES_USER: ${LABS_DATABASE_USER}
       POSTGRES_DB: ${LABS_DATABASE_DB}
       POSTGRES_PORT: ${LABS_DATABASE_PORT}
-    ports:
-      - ${LABS_DATABASE_PORT}:5432
+        # ports:
+        #   - ${LABS_DATABASE_PORT}:5432
+    expose:
+      - ${LABS_DATABASE_PORT}
     networks:
       - judaicalink-webnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql
 
   adminer:
     # Adminer for the postgres database access
     image: adminer
     container_name: adminer
     # restart: always
+    expose:
+      - "8000"
     ports:
       - 8081:8080
 
@@ -39,6 +50,11 @@ services:
       - "8000:80"
     networks:
       - judaicalink-webnet
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:80/"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
   # JudaicaLink Labs
   labs:
@@ -81,11 +97,16 @@ services:
       DJANGO_SETTINGS_MODULE: labs.settings
     env_file: .env  # Loads the other environment variables
     depends_on:
-      - postgres
-      - solr
-      - fuseki
-      - redis
-      - ontology
+      postgres:
+        condition: service_healthy
+      solr:
+        condition: service_healthy
+      fuseki:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ontology:
+        condition: service_started
     volumes:
       - data:/data
     ports:
@@ -94,6 +115,11 @@ services:
       - "8001"
     networks:
       - judaicalink-webnet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
   # Pubby Django
   pubby:
@@ -148,7 +174,8 @@ services:
         FUSEKI_STORAGE: ${FUSEKI_STORAGE}
     container_name: ontology
     depends_on:
-      - fuseki
+      fuseki:
+        condition: service_healthy
     command: tail -f /dev/null
     networks:
       - judaicalink-webnet
@@ -171,9 +198,11 @@ services:
     volumes:
       - data:/data
     depends_on:
-      - site
-      - fuseki
-      - dumps
+      site:
+        condition: service_healthy
+      fuseki:
+        condition: service_healthy
+      # - dumps
         # extra_hosts:
         #   - "fuseki:172.17.0.1"
         #   - "fuseki:127.0.0.1"
@@ -215,6 +244,9 @@ services:
       - data:/data
     networks:
       - judaicalink-webnet
+    depends_on:
+      fuseki:
+        condition: service_healthy
 
   # SOLR
   solr:
@@ -226,6 +258,8 @@ services:
     command: ["bash", "-c", "/docker-entrypoint-initdb.d/solr-init.sh"]
     ports:
       - "8983:8983"
+    expose:
+      - "8983"
     volumes:
       - solr_data:/var/solr
       - ./solr/indices/:/app/indices/ # TODO: change this to samba share or download the indices
@@ -236,29 +270,47 @@ services:
       - SOLR_URL=${SOLR_SERVER:-http://localhost:8983/solr}
       - SOLR_USER=${SOLR_USER}
       - SOLR_PASSWORD=${SOLR_PASSWORD}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8983/solr/admin/info/system"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Fuseki
   fuseki:
-    image: "secoresearch/fuseki"
+    build:
+      context: ./fuseki
     container_name: fuseki
     environment:
       - ADMIN_PASSWORD=${FUSEKI_PASSWORD}
     ports:
       - "3030:3030"
+    expose:
+      - "3030"
     volumes:
-      - fuseki_data:/fuseki # TODO: check if relevant
+      - fuseki_data:/fuseki-base/databases # TODO: check if relevant
       #- ./fuseki/assembler.ttl:/fuseki-base/configuration/assembler.ttl:ro
     networks:
       - judaicalink-webnet
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3030/ | grep -q Fuseki"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   # Redis
   redis:
     image: "redis:alpine"
     container_name: redis
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     networks:
       - judaicalink-webnet
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # NGINX as reverse proxy
   nginx:
@@ -271,18 +323,28 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - site
-      - labs
-      - pubby
-      - solr
-      - fuseki
-      - ontology
-      - loader
-      #- dumps
-      #- cron
-      - generators
-      - redis
-      - postgres
+      site:
+        condition: service_started
+      labs:
+        condition: service_healthy
+      pubby:
+        condition: service_started
+      solr:
+        condition: service_started
+      fuseki:
+        condition: service_started
+      ontology:
+        condition: service_started
+      # loader:
+      #   condition: service_started
+      #- dumps:
+      #- cron:
+      # generators:
+      # condition: service_started
+      redis:
+        condition: service_started
+      monit:
+        condition: service_started
     networks:
       - judaicalink-webnet
 
@@ -336,6 +398,8 @@ services:
       - MONIT_PASSWORD=${MONIT_PASSWORD}
     ports:
       - "2812:2812"  # Monit web interface
+    expose:
+      - "2812"
     volumes:
       - ./data/monit/logs:/var/log/monit
       - ./monit/monit.cfg:/etc/monit/monit.d/monit.cfg
@@ -345,7 +409,7 @@ services:
         monit -I -c /etc/monit/monitrc
       "
     depends_on:
-      - nginx
+      # - nginx
       - labs
       - site
       - pubby
@@ -389,9 +453,12 @@ services:
 
 volumes:
   fuseki_data:
+    driver: local
   solr_data:
     driver: local
   data:
+    driver: local
+  postgres_data:
     driver: local
   #smb_share:
   #  driver: local
