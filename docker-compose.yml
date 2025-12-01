@@ -198,8 +198,8 @@ services:
     volumes:
       - data:/data
     depends_on:
-      site:
-        condition: service_healthy
+      # site:
+      #   condition: service_healthy
       fuseki:
         condition: service_healthy
       # - dumps
