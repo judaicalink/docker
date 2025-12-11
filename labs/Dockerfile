@@ -107,6 +107,10 @@ ENV DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 ENV DJANGO_SUPERUSER_USERNAME=$DJANGO_SUPERUSER_USERNAME
 ENV DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
 ENV DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL
+ENV DATABASE_HOST=$DATABASE_HOST
+ENV DATABASE_PORT=$DATABASE_PORT
+ENV DATABASE_DB=$DATABASE_DB
+ENV STATIC_URL=$STATIC_URL
 
 ENV NVM_VERSION=22
 
@@ -178,42 +182,33 @@ ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 
 # Install Python dependencies
 RUN pip install -r requirements.txt
-#RUN echo $(ls -1 /app/labs)
 
 
 WORKDIR /app/labs
 
-# Install Node.js and npm using nvm
-RUN node -v
-RUN nvm use current
-RUN npm -v
-
 # Delete node_modules and package-lock.json for a clean install
 RUN rm -rf node_modules
 RUN rm -rf package-lock.json
+RUN rm -rf webpack-stats.json
 
 
-# Install npm dependencies and build the frontend
+# ENV für STATIC_URL, wenn dein webpack.config.js das nutzt (process.env.STATIC_URL)
+ENV STATIC_URL=/labs/static/
+
+RUN nvm use current
 RUN npm install
-
-# Build the frontend assets
 RUN npm run build
 
-# Collect static files
-#RUN npm run cs
 
 # Wait for dependent services
 COPY wait-for-it.sh /app/wait-for-it.sh
-RUN chmod +x /app/wait-for-it.sh
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/wait-for-it.sh /app/entrypoint.sh
 
-#ENTRYPOINT ["tail"]
-#CMD ["-f","/dev/null"]
+WORKDIR /app
 
-
-# Run the application using Daphne
-CMD ["/bin/bash", "-c", "/app/wait-for-it.sh localhost:5432 -- python manage.py makemigrations --no-input && python manage.py migrate --no-input && python manage.py collectstatic --no-input && python manage.py createsuperuser --no-input && daphne --bind 0.0.0.0 -p 8001 labs.asgi:application"]
-
-#CMD ["daphne", "-b", "0.0.0.0", "-p", "8001", "labs.asgi:application"]
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["daphne", "--bind", "0.0.0.0", "-p", "8001", "labs.asgi:application"]
 
 # Expose the port
 EXPOSE 8001
