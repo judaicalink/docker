@@ -1,0 +1,64 @@
+services:
+  # JudaicaLink Site
+  site:
+    build:
+      context: ./site
+      args: {}
+    volumes:
+      - ../judaicalink-site:/app/site
+      - data:/data
+
+  # JudaicaLink Labs
+  labs:
+    build:
+      context: ./labs
+      args: {}
+    volumes:
+      - ../judaicakink-labs/labs:/app/labs
+      - data:/data
+
+  # Pubby Django
+  pubby:
+    build:
+      context: ./pubby
+      args: {}
+    volumes:
+      - ../pubby-django:/app
+      - data:/data
+
+  # Judaicalink Ontology
+  ontology:
+    build:
+      context: ./ontology
+      args: {}
+    container_name: ontology
+    volumes:
+      - ../judaicalink-ontology:/app/
+
+
+  # Judaicalink Loader
+  loader:
+    build:
+      context: ./loader
+      args: {}
+    volumes:
+      #- ./cm/dumps:/cm/dumps
+      - ../judaicalink-loader:/app
+      - data:/data
+
+  # JudaicaLink Generators
+  generators:
+    build:
+      context: ./generators
+      args: {}
+    volumes:
+      - ../judaicalink-generators:/app
+
+volumes:
+  #smb_share:
+  #  driver: local
+  #  driver_opts:
+  #    type: cifs
+  #    o: "addr=${SAMBA_SERVER},username=${SAMBA_USER},password=${SAMBA_PASS}"
+  #    device: "//${SAMBA_SERVER}/${SAMBA_SHARE}"
+

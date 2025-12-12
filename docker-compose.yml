@@ -79,22 +79,30 @@ services:
         DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
         DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
         DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
-        STATIC_ROOT: ${LABS_STATIC_ROOT}
-        STATIC_URL: ${LABS_STATIC_URL}
-        MEDIA_ROOT: ${LABS_MEDIA_ROOT}
-        MEDIA_URL: ${LABS_MEDIA_URL}
         SOLR_URL: ${SOLR_SERVER}
-        LABS_ROOT: ${LABS_ROOT}
-        LABS_GIT_WEBROOT: ${LABS_GIT_WEBROOT}
-        LABS_DUMPS_WEBROOT: ${LABS_DUMPS_WEBROOT}
-        LABS_DUMPS_LOCAL: ${LABS_DUMPS_LOCAL}
-        JUDAICALINK_LOADER_PATH: ${JUDAICALINK_LOADER_PATH}
-        GENERATORS_BASE_DIR: ${GENERATORS_BASE_DIR}
-        ENDPOINT: ${ENDPOINT}
 
     container_name: labs
     environment:
       DJANGO_SETTINGS_MODULE: labs.settings
+      STATIC_ROOT: ${LABS_STATIC_ROOT}
+      STATIC_URL: ${LABS_STATIC_URL}
+      MEDIA_ROOT: ${LABS_MEDIA_ROOT}
+      MEDIA_URL: ${LABS_MEDIA_URL}
+      LABS_ROOT: ${LABS_ROOT}
+      LABS_GIT_WEBROOT: ${LABS_GIT_WEBROOT}
+      LABS_DUMPS_WEBROOT: ${LABS_DUMPS_WEBROOT}
+      LABS_DUMPS_LOCAL: ${LABS_DUMPS_LOCAL}
+      JUDAICALINK_LOADER_PATH: ${JUDAICALINK_LOADER_PATH}
+      GENERATORS_BASE_DIR: ${GENERATORS_BASE_DIR}
+      ENDPOINT: ${ENDPOINT}
+      EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
+      EMAIL_HOST: mailserver
+      EMAIL_PORT: 587
+      EMAIL_USE_TLS: "True"
+      EMAIL_HOST_USER: ${LABS_EMAIL_USER}
+      EMAIL_HOST_PASSWORD: ${LABS_EMAIL_PASSWORD}
+      DEFAULT_FROM_EMAIL: ${LABS_DEFAULT_FROM_EMAIL}
+
     env_file: ${ENV_FILE:-.env}  # Loads the other environment variables
     depends_on:
       postgres:
@@ -131,7 +139,6 @@ services:
         GIT_BRANCH: ${PUBBY_GIT_BRANCH}
         LOGFILE: ${PUBBY_LOGFILE}
         SECRET_KEY: ${PUBBY_SECRET_KEY}
-        DJANGO_SETTINGS_MODULE: ${PUBBY_DJANGO_SETTINGS_MODULE}
         DEBUG: ${PUBBY_DEBUG}
         ALLOWED_HOSTS: ${PUBBY_ALLOWED_HOSTS}
         GND_FILE: ${GND_FILE}
@@ -140,11 +147,15 @@ services:
         DATABASE_URL: ${PUBBY_DATABASE_URL}
         DATABASE_ENGINE: ${PUBBY_DATABASE_ENGINE}
         DATABASE_NAME: ${PUBBY_DATABASE_NAME}
-        STATIC_ROOT: ${PUBBY_STATIC_ROOT}
-        STATIC_URL: ${PUBBY_STATIC_URL}
-        MEDIA_ROOT: ${PUBBY_MEDIA_ROOT}
 
     container_name: pubby
+    environment:
+      DJANGO_SETTINGS_MODULE: ${PUBBY_DJANGO_SETTINGS_MODULE}
+      STATIC_ROOT: ${PUBBY_STATIC_ROOT}
+      STATIC_URL: ${PUBBY_STATIC_URL}
+      MEDIA_ROOT: ${PUBBY_MEDIA_ROOT}
+      MEDIA_URL: ${PUBBY_MEDIA_URL}
+
     env_file: ${ENV_FILE:-.env}  # Loads the other environment variables
     depends_on:
       - fuseki
@@ -152,7 +163,7 @@ services:
       - redis
       - postgres
     volumes:
-        - data:/data
+      - data:/data
     expose:
       - "8000"
     ports:
@@ -198,14 +209,21 @@ services:
     volumes:
       - data:/data
     depends_on:
-      # site:
-      #   condition: service_healthy
       fuseki:
         condition: service_healthy
       # - dumps
         # extra_hosts:
         #   - "fuseki:172.17.0.1"
         #   - "fuseki:127.0.0.1"
+      site:
+        condition:  service_healthy
+      dumps:
+        condition: service_started
+      solr:
+        condition: service_healthy
+    extra_hosts:
+      - "fuseki:172.17.0.1"
+      - "fuseki:127.0.0.1"
     links:
       - fuseki
     networks:
@@ -255,7 +273,7 @@ services:
     #    dockerfile: Dockerfile
     image: solr:latest
     container_name: solr
-    command: ["bash", "-c", "/docker-entrypoint-initdb.d/solr-init.sh"]
+    command: [ "bash", "-c", "/docker-entrypoint-initdb.d/solr-init.sh" ]
     ports:
       - "8983:8983"
     expose:
@@ -333,10 +351,10 @@ services:
         condition: service_started
       fuseki:
         condition: service_started
-      ontology:
-        condition: service_started
-      # loader:
+      # ontology:
       #   condition: service_started
+      loader:
+        condition: service_started
       #- dumps:
       #- cron:
       # generators:
@@ -366,7 +384,7 @@ services:
       - judaicalink-webnet
     # restart: unless-stopped
 
-# Cron for backups and sync
+  # Cron for backups and sync
   cron:
     build:
       context: .
@@ -389,7 +407,7 @@ services:
     networks:
       - judaicalink-webnet
 
-# Monit for monitoring
+  # Monit for monitoring
   monit:
     image: maltyxx/monit:latest
     container_name: monit
@@ -419,7 +437,7 @@ services:
       - "host.docker.internal:host-gateway"
     # restart: unless-stopped
 
-# AWStats
+  # AWStats
   awstats:
     image: pabra/awstats:latest
     container_name: awstats
@@ -430,7 +448,7 @@ services:
     environment:
       - TZ="Europe/Berlin"
     depends_on:
-      - nginx
+      #- nginx
       - labs
       - site
       - pubby
@@ -450,6 +468,30 @@ services:
       - judaicalink-webnet
 
     # restart: unless-stopped
+
+    #  Mailserver
+  mailserver:
+    image: mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: ${MAILSERVER_HOSTNAME}        # z.B. mail
+    domainname: ${MAILSERVER_DOMAIN}        # z.B. example.org
+    environment:
+      - ENABLE_SPAMASSASSIN=1
+      - ENABLE_CLAMAV=1
+      - ENABLE_FAIL2BAN=1
+      - ENABLE_POSTGREY=1
+    ports:
+      - "25:25"     # SMTP
+      - "587:587"   # Submission (empfohlen für Django)
+      - "993:993"   # IMAPS (für Mail-Client)
+      - "143:143"   # IMAP (optional)
+    volumes:
+      - ./mailserver/data:/var/mail
+      - ./mailserver/state:/var/mail-state
+      - ./mailserver/config:/tmp/docker-mailserver
+    restart: unless-stopped
+    networks:
+      - judaicalink-webnet
 
 volumes:
   fuseki_data:
