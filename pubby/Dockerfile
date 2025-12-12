@@ -66,7 +66,14 @@ ARG DATABASE_PORT
 ARG DJANGO_LOG_FILE="/var/log/pubby.log"
 ARG DJANGO_LOG_LEVEL="INFO"
 ARG USE_X_FORWARDED_HOST=True
-ARG USE_X_FORWARDED_PORT=True
+ARG EMAIL_BACKEND
+ARG EMAIL_HOST
+ARG EMAIL_PORT
+ARG EMAIL_USE_TLS
+ARG EMAIL_HOST_USER
+ARG EMAIL_HOST_PASSWORD
+ARG EMAIL_DEFAULT_FROM_EMAIL
+
 
 RUN if [ -z "$SECRET_KEY" ];  \
     then echo "SECRET_KEY is not set. Generating a random one."; \
@@ -97,6 +104,13 @@ RUN echo "DEBUG=$DEBUG" >> localsettings.py && \
     echo "USE_X_FORWARDED_HOST=$USE_X_FORWARDED_HOST" >> localsettings.py && \
     echo "USE_X_FORWARDED_PORT=$USE_X_FORWARDED_PORT" >> localsettings.py && \
     echo "DATASETS_DIR='$DATASETS_DIR'" >> localsettings.py && \
+    echo "EMAIL_BACKEND='$EMAIL_BACKEND'" >> localsettings.py && \
+    echo "EMAIL_HOST='$EMAIL_HOST'" >> localsettings.py && \
+    echo "EMAIL_PORT=$EMAIL_PORT" >> localsettings.py && \
+    echo "EMAIL_USE_TLS=$EMAIL_USE_TLS" >> localsettings.py && \
+    echo "EMAIL_HOST_USER='$EMAIL_HOST_USER'" >> localsettings.py && \
+    echo "EMAIL_HOST_PASSWORD='$EMAIL_HOST_PASSWORD'" >> localsettings.py && \
+    echo "EMAIL_DEFAULT_FROM_EMAIL='$EMAIL_DEFAULT_FROM_EMAIL'" >> localsettings.py && \
     echo "PUBBY_CONFIG = {'pubby': 'pubby/config.ttl', 'pubby2': 'pubby/config-local.ttl', 'data':  'pubby/config-judaicalink.ttl', 'datasets': 'pubby/config-judaicalink-datasets.ttl', 'ontology': 'pubby/config-judaicalink-ontology.ttl'}" >> localsettings.py
 
 
