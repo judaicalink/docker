@@ -95,7 +95,7 @@ services:
     container_name: labs
     environment:
       DJANGO_SETTINGS_MODULE: labs.settings
-    env_file: .env  # Loads the other environment variables
+    env_file: ${ENV_FILE:-.env}  # Loads the other environment variables
     depends_on:
       postgres:
         condition: service_healthy
@@ -145,7 +145,7 @@ services:
         MEDIA_ROOT: ${PUBBY_MEDIA_ROOT}
 
     container_name: pubby
-    env_file: .env  # Loads the other environment variables
+    env_file: ${ENV_FILE:-.env}  # Loads the other environment variables
     depends_on:
       - fuseki
       - solr
@@ -189,7 +189,7 @@ services:
         GIT_REPO_URL: ${LOADER_GIT_REPO_URL}
         GIT_BRANCH: ${LOADER_GIT_BRANCH}
     container_name: loader
-    env_file: .env
+    env_file: ${ENV_FILE:-.env}
     #command: tail -f /dev/null
     environment:
       - FUSEKI_SERVER=${FUSEKI_SERVER}
@@ -238,7 +238,7 @@ services:
         GIT_BRANCH: ${GENERATORS_GIT_BRANCH}
         FUSEKI_SERVER: ${FUSEKI_SERVER}
     container_name: generators
-    env_file: .env
+    env_file: ${ENV_FILE:-.env}
     command: tail -f /dev/null
     volumes:
       - data:/data
