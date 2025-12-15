@@ -171,7 +171,6 @@ services:
         MEDIA_ROOT: ${PUBBY_MEDIA_ROOT}
 
     container_name: pubby
-<<<<<<< HEAD
     environment:
       DJANGO_SETTINGS_MODULE: ${PUBBY_DJANGO_SETTINGS_MODULE}
       STATIC_ROOT: ${PUBBY_STATIC_ROOT}
@@ -180,9 +179,6 @@ services:
       MEDIA_URL: ${PUBBY_MEDIA_URL}
 
     env_file: ${ENV_FILE:-.env}  # Loads the other environment variables
-=======
-    env_file: .env  # Loads the other environment variables
->>>>>>> 2c801d04e84736136bdb84646c5e43ff9e45aec5
     depends_on:
       - fuseki
       - solr
@@ -235,7 +231,6 @@ services:
     volumes:
       - data:/data
     depends_on:
-<<<<<<< HEAD
       fuseki:
         condition: service_healthy
       # - dumps
@@ -248,11 +243,6 @@ services:
         condition: service_started
       solr:
         condition: service_healthy
-=======
-      - site
-      - fuseki
-      - dumps
->>>>>>> 2c801d04e84736136bdb84646c5e43ff9e45aec5
     extra_hosts:
       - "fuseki:172.17.0.1"
       - "fuseki:127.0.0.1"
@@ -373,7 +363,6 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-<<<<<<< HEAD
       site:
         condition: service_started
       labs:
@@ -394,22 +383,6 @@ services:
       # condition: service_started
       redis:
         condition: service_started
-      monit:
-        condition: service_started
-=======
-      - site
-      - labs
-      - pubby
-      - solr
-      - fuseki
-      #- ontology
-      #- loader
-      #- dumps
-      #- cron
-      #- generators
-      - redis
-      - postgres
->>>>>>> 2c801d04e84736136bdb84646c5e43ff9e45aec5
     networks:
       - judaicalink-webnet
 
