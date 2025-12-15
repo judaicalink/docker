@@ -2,7 +2,7 @@
 set -e
 
 SOLR_URL="http://localhost:8983/solr"
-DATA_DIR="/app/indices"
+DATA_DIR="/var/solr/solr_indices"
 CORES=("cm" "cm_meta" "cm_entities" "cm_entity_names" "judaicalink" "judaicalink-beta")
 
 echo "📦 Creating Solr cores if they do not exist..."
@@ -47,6 +47,19 @@ done
 echo "✅ Solr is ready."
 
 # Lade alle .json-Dateien, die zu einem Core passen
+if [ -d "$DATA_DIR" ]; then
+  echo "indices appear to be loaded"
+  wait $SOLR_PID
+  exit 0
+fi
+
+pushd /app  # maybe change the hard-coded director and filename
+tar xaf indices2.tar.bz2
+echo "decompressed index dumps"
+mv indices2 "$DATA_DIR"
+echo "moved index dumps to volume at $DATA_DIR"
+popd
+
 for file in "$DATA_DIR"/*.json; do
   [ -e "$file" ] || continue
   core_name=$(basename "$file" .json)

@@ -290,9 +290,9 @@ services:
 
   # SOLR
   solr:
-    #build:
-    #    context: ./solr
-    #    dockerfile: Dockerfile
+    build:
+        context: ./solr
+        dockerfile: Dockerfile
     image: solr:latest
     container_name: solr
     command: [ "bash", "-c", "/docker-entrypoint-initdb.d/solr-init.sh" ]
@@ -302,8 +302,8 @@ services:
       - "8983"
     volumes:
       - solr_data:/var/solr
-      - ./solr/indices/:/app/indices/ # TODO: change this to samba share or download the indices
-      - ./solr/solr-init.sh:/docker-entrypoint-initdb.d/solr-init.sh
+        # - ./solr/indices/:/app/indices/ # TODO: change this to samba share or download the indices
+        # - ./solr/solr-init.sh:/docker-entrypoint-initdb.d/solr-init.sh
     networks:
       - judaicalink-webnet
     environment:
