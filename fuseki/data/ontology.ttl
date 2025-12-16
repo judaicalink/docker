@@ -1,0 +1,17 @@
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix jl:   <http://data.judaicalink.org/ontology/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<http://data.judaicalink.org/ontology>
+  a owl:Ontology ;
+  owl:versionInfo "2025-01" ;
+  skos:prefLabel "JudaicaLink Ontology"@en .
+
+jl:Person a owl:Class ;
+  skos:prefLabel "Person"@en ;
+  skos:prefLabel "Person"@de .
+
+jl:Organization a owl:Class ;
+  skos:prefLabel "Organization"@en ;
+  skos:prefLabel "Organisation"@de .
